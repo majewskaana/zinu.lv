@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+<title>Admin panel</title>
+@endsection
 @section('content')
 
 <body>

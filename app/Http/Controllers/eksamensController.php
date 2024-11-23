@@ -5,38 +5,25 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
-class HomeController extends Controller
+class eksamensController extends Controller
 {
-    /**
-     * Create a new controller instance.
-     *
-     * @return void
-     */
     public function __construct()
     {
         $this->middleware('auth');
     }
-
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
     public function index()
     {
         if(Auth::id()){
             $usertype = Auth()->user()->usertype;
             
             if ($usertype == 'user') {
-                return view('user.home');
-            }
-            else if ($usertype == 'admin') {
-                return view('admin.adminpanel');
+                return view('user.exam');
             }
             else {
-                return redirect()->back();
+                return view('auth.login');
             }
         }
+
         
     }
 }

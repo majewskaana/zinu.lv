@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\privatskolotajiController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -21,6 +22,6 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-Auth::routes();
-
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/privatskolotaji', [App\Http\Controllers\privatskolotajiController::class, 'index'])->name('privatskolotaji');
+Route::get('/sadarbiba', [App\Http\Controllers\privatskolotajiController::class, 'sadarbiba'])->name('sadarbiba');
+Route::get('/exam', [App\Http\Controllers\eksamensController::class, 'index'])->name('exam');
