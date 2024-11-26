@@ -16,11 +16,8 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('text');
-            $table->unsignedBigInteger('Subject')->nullable();
-            $table->timestamps();
-
-            $table->foreign('SUbject')->references('id')->on('subjects')->onDelete('cascade');
-            
+            $table->foreignId('Subject')->constrained('themes')->nullable();
+            $table->timestamps();            
         });
     }
 

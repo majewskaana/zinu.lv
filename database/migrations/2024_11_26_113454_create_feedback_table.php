@@ -16,11 +16,8 @@ return new class extends Migration
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
             $table->string('text');
-            $table->unsignedBigInteger('privateTeacher')->nullable();
-            $table->unsignedBigInteger('leftUser');
-
-            $table->foreign('privateTeacher')->references('id')->on('subjects')->onDelete('cascade');
-            $table->foreign('leftUser')->references('id')->on('users')->onDelete('cascade');
+            $table->foreignId('privateTeacher')->constrained('private_teachers');
+            $table->foreignId('leftUser')->constrained('users');
             $table->timestamps();
         });
     }
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('atsauksmes');
+        Schema::dropIfExists('feedback');
     }
 };

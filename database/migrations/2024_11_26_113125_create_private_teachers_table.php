@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('image_path');
             $table->string('material_style');
             $table->string('about_private_teacher');
+            $table->foreignId('subject_id')->constrained('subjects');
             $table->rememberToken();
             $table->timestamps();
         });

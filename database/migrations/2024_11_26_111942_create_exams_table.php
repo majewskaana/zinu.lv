@@ -15,14 +15,11 @@ return new class extends Migration
     {
         Schema::create('exams', function (Blueprint $table) {
             $table->id();
-            $table->int('gads');
+            $table->year('gads');
             $table->string('limenis');
-            $table->unsignedBigInteger('Mācību_priekšmets')->nullable();
-            $table->unsignedBigInteger('Uzdevums')->nullable();
+            $table->foreignId('macibu_prieksmets')->constrained('subjects')->nullable();
+            $table->foreignId('uzdevums')->constrained('tasks')->nullable();
             $table->timestamps();
-
-            $table->foreignId('macibu_prieksmets_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('uzdevums_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 

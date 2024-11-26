@@ -15,6 +15,8 @@ return new class extends Migration
     {
         Schema::create('themes', function (Blueprint $table) {
             $table->id();
+            $table->string('text');
+            $table->foreignId('macibu_prieksmets_id')->constrained('subjects');
             $table->timestamps();
         });
     }
