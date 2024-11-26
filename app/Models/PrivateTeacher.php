@@ -28,4 +28,11 @@ class PrivateTeacher extends Model
     {
         return $this->belongsToMany(Subjects::class);
     }
+
+    public function setImagePathAttribute($value)
+{
+    if (is_file($value)) {
+        $this->attributes['image_path'] = $value->store('images', 'public');
+    }
+}
 }

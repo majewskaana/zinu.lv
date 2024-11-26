@@ -21,8 +21,8 @@ return new class extends Migration
             $table->unsignedBigInteger('Uzdevums')->nullable();
             $table->timestamps();
 
-            $table->foreign('Mācību_priekšmets')->references('id')->on('subjects')->onDelete('cascade');
-            $table->foreign('Uzdevums')->references('id')->on('tasks')->onDelete('cascade');
+            $table->foreignId('macibu_prieksmets_id')->nullable()->constrained()->onDelete('set null');
+            $table->foreignId('uzdevums_id')->nullable()->constrained()->onDelete('set null');
         });
     }
 
