@@ -44,7 +44,7 @@
 
                             <div class="ml-12">
                                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                                    Mūsu vietne piedāvā plašu privātskolotāu klāstu, la Tu varētu veiksmīgi sagatavoties savam centralizētam eksāmenam.
+                                    Mūsu vietne piedāvā plašu privātskolotāju klāstu, la Tu varētu veiksmīgi sagatavoties savam centralizētam eksāmenam.
                                 </div>
                             </div>
                         </div>

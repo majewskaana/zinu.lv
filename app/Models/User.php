@@ -23,8 +23,17 @@ class User extends Authenticatable
         'username',
         'email',
         'password',
+        'city',
     ];
+    public function eksameni()
+    {
+        return $this->belongsToMany(Exam::class, 'attended');
+    }
 
+    public function atsauksmes()
+    {
+        return $this->hasMany(Feedback::class, 'leftUser');
+    }
     /**
      * The attributes that should be hidden for serialization.
      *

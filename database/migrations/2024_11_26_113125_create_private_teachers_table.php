@@ -13,15 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
+        Schema::create('private_teachers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('surname');
-            $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('usertype')->default('user');
-            $table->string('password');
-            $table->timestamp('city')->nullable();
+            $table->string('contact_info');
+            $table->timestamp('city');
+            $table->string('image_path');
+            $table->string('material_style');
+            $table->string('about_private_teacher');
             $table->rememberToken();
             $table->timestamps();
         });
@@ -34,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('private_teachers');
     }
 };
