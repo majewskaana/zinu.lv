@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\privatskolotajiController;
+use App\Http\Controllers\eksamensController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -25,3 +26,8 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/privatskolotaji', [App\Http\Controllers\privatskolotajiController::class, 'index'])->name('privatskolotaji');
 Route::get('/sadarbiba', [App\Http\Controllers\privatskolotajiController::class, 'sadarbiba'])->name('sadarbiba');
 Route::get('/exam', [App\Http\Controllers\eksamensController::class, 'index'])->name('exam');
+
+Route::get('/exam/create', [eksamensController::class, 'create'])->name('examCreation.create');
+
+// Определение маршрута для обработки данных POST-запроса при отправке формы
+Route::post('/exam', [eksamensController::class, 'store'])->name('examCreation.store');
