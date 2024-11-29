@@ -16,7 +16,8 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('text');
-            $table->foreignId('Subject')->constrained('themes')->nullable();
+            $table->foreignId('subject_id')->constrained('subjects');
+            $table->foreignId('theme_id')->constrained('themes');
             $table->timestamps();            
         });
     }

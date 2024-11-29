@@ -30,9 +30,9 @@ class PrivateTeacher extends Model
     }
 
     public function setImagePathAttribute($value)
-{
-    if (is_file($value)) {
-        $this->attributes['image_path'] = $value->store('images', 'public');
+    {
+        if (is_file($value)) {
+            $this->attributes['image_path'] = $value->store('images', 'public');
+        }
     }
-}
 }
