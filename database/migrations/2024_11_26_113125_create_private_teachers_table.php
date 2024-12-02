@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('name');
             $table->string('surname');
             $table->string('contact_info');
-            $table->timestamp('city');
+            $table->string('city');
             $table->string('image_path');
             $table->string('material_style');
             $table->string('about_private_teacher');

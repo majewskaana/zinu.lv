@@ -17,6 +17,7 @@ class PrivateTeacher extends Model
             'image_path',
             'material_style',
             'about_private_teacher',
+            'subject_id',
     ];
 
     public function feedbacks()
@@ -26,7 +27,7 @@ class PrivateTeacher extends Model
 
     public function macibuPrieksmeti()
     {
-        return $this->belongsToMany(Subjects::class);
+        return $this->belongsToMany(Subjects::class, 'subject_id');
     }
 
     public function setImagePathAttribute($value)

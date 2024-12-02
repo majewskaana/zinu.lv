@@ -40,7 +40,7 @@ class privatskolotajiController extends Controller
         'contact_info' => 'required|string',
         'city' => 'required|string',
         'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'material_type' => 'required|string',
+        'material_style' => 'required|string',
         'about_private_teacher' => 'required|string',
         'subject_id' => 'required|exists:subjects,id',
     ]);
@@ -56,9 +56,9 @@ class privatskolotajiController extends Controller
         'contact_info' => $request->contact_info,
         'city' => $request->city,
         'image_path' => $image,
-        'material_type' => $request->material_type,
-        'abot_private_teacher' => $request->about_private_teacher,
-        'macibu_prieksmets_id' => $request->subject_id,
+        'material_style' => $request->material_style,
+        'about_private_teacher' => $request->about_private_teacher,
+        'subject_id' => $request->subject_id,
     ]);
 
     return redirect()->route('teacherCreation.create')->with('success', 'Privātskolotājs ir veiksmīgi pievienots!');

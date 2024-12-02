@@ -49,5 +49,19 @@ class DatabaseSeeder extends Seeder
             'macibu_prieksmets_id' => '1',
         ]);
 
+        Subjects::create([
+            'name' => 'Fizika',
+            'form' => '9. klase',
+        ]);
+
+        Theme::create([
+            'text' => 'Atomi',
+            'macibu_prieksmets_id' => '2',
+        ]);
+        Theme::create([
+            'text' => 'Astronomija',
+            'macibu_prieksmets_id' => '2',
+        ]);
+
     }
 }

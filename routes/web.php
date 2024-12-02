@@ -35,7 +35,6 @@ Route::get('/get-themes', function (Request $request) {
         if ($themes->isEmpty()) {
             return response()->json(['error' => 'No themes found for this subject'], 404);
         }
-
         return response()->json(['themes' => $themes]);
     } catch (\Exception $e) {
         \Log::error('Error loading themes: ' . $e->getMessage());

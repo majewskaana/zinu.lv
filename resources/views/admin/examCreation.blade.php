@@ -6,7 +6,11 @@
 @section('content')
 <div class="container">
     <h1>Pievienot jaunu eksāmenu</h1>
-
+    @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
     <form action="{{ route('examCreation.store') }}" method="POST">
         @csrf
 

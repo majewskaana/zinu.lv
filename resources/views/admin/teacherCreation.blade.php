@@ -6,6 +6,11 @@
 @section('content')
 <div class="container">
     <h1>Pievienot jaunu privātskolotāju</h1>
+    @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+        @endif
 
     <form action="{{ route('teacherCreation.store') }}" method="POST" enctype="multipart/form-data">
         @csrf
@@ -29,13 +34,13 @@
         <div class="form-group">
             <label for="gads">Mācību priekšmets</label>
             <select class="form-control @error('subject_id') is-invalid @enderror" id="subject_id" name="subject_id" required>
-                <option value="">Izvēlēties...</option>
-                @foreach($subjects as $subject)
-                    <option value="{{ $subject->id }}" {{ old('subject_id') == $subject->id ? 'selected' : '' }}>{{ $subject->name }}</option>
-                @endforeach
-            </select>@error('subject_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
+            <option value="">Izvēlēties...</option>
+            @foreach($subjects as $subject)
+            <option value="{{ $subject->id }}" {{ old('subject_id') == $subject->id ? 'selected' : '' }}>
+            {{ $subject->name }}
+            </option>
+             @endforeach
+            </select>
         </div>
 
         <div class="form-group">
@@ -81,7 +86,6 @@
         <button type="submit" class="btn btn-primary">Pievienot</button>
     </form>
 </div>
-    
-</script>
+
 
 @endsection
