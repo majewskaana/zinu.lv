@@ -47,8 +47,13 @@ Route::get('/get-themes', function (Request $request) {
 
 Route::post('/exam', [eksamensController::class, 'store'])->name('examCreation.store');
 
+Route::get('/subjects', [subjectController::class, 'index'])->name('subjects.index');
 Route::get('/subject/create', [subjectController::class, 'create'])->name('subjectCreation.create');
 Route::post('/subject', [subjectController::class, 'store'])->name('subjectCreation.store');
+Route::get('/subjects/{id}/edit', [subjectController::class, 'edit'])->name('subjectEdit.edit');
+Route::put('/subjects/{id}', [subjectController::class, 'update'])->name('subjectEdit.update');
+Route::delete('/subjects/{id}', [subjectController::class, 'destroy'])->name('subjectEdit.destroy');
+
 
 Route::get('/teacher/create', [privatskolotajiController::class, 'create'])->name('teacherCreation.create');
 Route::post('/teacher', [privatskolotajiController::class, 'store'])->name('teacherCreation.store');
