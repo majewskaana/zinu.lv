@@ -13,16 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('private_teachers', function (Blueprint $table) {
+        Schema::create('private_teacher_subject', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('surname');
-            $table->string('contact_info');
-            $table->string('city');
-            $table->string('image_path');
-            $table->string('material_style');
-            $table->string('about_private_teacher');
-            $table->rememberToken();
+            $table->foreignId('teacher_id')->constrained('private_teachers')->onDelete('cascade');
+            $table->foreignId('subject_id')->constrained('subjects')->onDelete('cascade');
             $table->timestamps();
         });
     }
@@ -34,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('private_teachers');
+        Schema::dropIfExists('private_teacher_subject');
     }
 };

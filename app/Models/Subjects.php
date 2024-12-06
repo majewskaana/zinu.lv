@@ -21,7 +21,7 @@ class Subjects extends Model
 
     public function privatskolotaji()
     {
-        return $this->belongsToMany(PrivateTeacher::class);
+        return $this->belongsToMany(PrivateTeacher::class, 'private_teacher_subject', 'subject_id', 'teacher_id');
     }
 
     public function uzdevumi()

@@ -3,6 +3,62 @@
     <title>Pievienot eksāmenu</title>
 @endsection('title')
 
+@section('script')
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+
+    $('#subject_id').change(function() {
+        var subjectId = $(this).val();
+        if (subjectId) {
+            $.ajax({
+                url: '/get-themes',
+                type: 'GET',
+                data: { subject_id: subjectId },
+                success: function(response) {
+                    $('#tema_id').empty();
+
+                    $('#tema_id').append('<option value="">Izvēlēties...</option>');
+
+                    $.each(response.themes, function(index, theme) {
+                        $('#tema_id').append('<option value="' + theme.id + '">' + theme.text + '</option>');
+                    });
+                },
+                error: function(xhr, status, error) {
+                    console.error('Error:', status, error); 
+                    alert('Nesanāca atrast tēmas!');
+                }
+            });
+        } else {
+            $('#tema_id').empty().append('<option value="">Izvēlēties...</option>');
+        }
+    });
+
+
+document.getElementById('add_variant').addEventListener('click', function() {
+        const variantsDiv = document.getElementById('variants');
+        const newVariantGroup = document.createElement('div');
+        newVariantGroup.classList.add('variant-group', 'mb-3');
+        newVariantGroup.innerHTML = `
+            <input type="text" class="form-control mb-2" name="variants[]" placeholder="Atbilde">
+            <input type="radio" name="correct_variant" value="${variantsDiv.children.length}"> Pareizā
+        `;
+        variantsDiv.appendChild(newVariantGroup);
+    });
+
+
+
+});
+
+
+    
+</script>
+
+@endsection('script')
+
+
+
 @section('content')
 <div class="container">
     <h1>Pievienot jaunu eksāmenu</h1>
@@ -72,54 +128,6 @@
         <button type="submit" class="btn btn-primary">Pievienot</button>
     </form>
 </div>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(function() {
 
-    $('#subject_id').change(function() {
-        var subjectId = $(this).val();
-        if (subjectId) {
-            $.ajax({
-                url: '/get-themes',
-                type: 'GET',
-                data: { subject_id: subjectId },
-                success: function(response) {
-                    $('#tema_id').empty();
-
-                    $('#tema_id').append('<option value="">Izvēlēties...</option>');
-
-                    $.each(response.themes, function(index, theme) {
-                        $('#tema_id').append('<option value="' + theme.id + '">' + theme.text + '</option>');
-                    });
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error:', status, error); 
-                    alert('Nesanāca atrast tēmas!');
-                }
-            });
-        } else {
-            $('#tema_id').empty().append('<option value="">Izvēlēties...</option>');
-        }
-    });
-
-
-document.getElementById('add_variant').addEventListener('click', function() {
-        const variantsDiv = document.getElementById('variants');
-        const newVariantGroup = document.createElement('div');
-        newVariantGroup.classList.add('variant-group', 'mb-3');
-        newVariantGroup.innerHTML = `
-            <input type="text" class="form-control mb-2" name="variants[]" placeholder="Atbilde">
-            <input type="radio" name="correct_variant" value="${variantsDiv.children.length}"> Pareizā
-        `;
-        variantsDiv.appendChild(newVariantGroup);
-    });
-
-
-
-});
-
-
-    
-</script>
 
 @endsection

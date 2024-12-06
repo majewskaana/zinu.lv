@@ -3,6 +3,86 @@
     <title>Pievienot privātskolotāju</title>
 @endsection('title')
 
+@section('script')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    let selectedSubjects = [];
+    const selectedSubjectsContainer = document.getElementById('selected-subjects');
+    const subjectList = document.getElementById('subject-list');
+    const addSubjectButton = document.getElementById('add-subject-btn');
+    const form = document.querySelector('form');  
+
+    addSubjectButton.addEventListener('click', function () {
+        showSubjectList();
+    });
+
+function updateSubjectIds() {
+    const existingInputs = document.querySelectorAll('.subject-id-input');
+    existingInputs.forEach(input => input.remove());
+
+    selectedSubjects.forEach(subjectId => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'subject_id[]';  
+        input.value = subjectId;      
+        input.classList.add('subject-id-input');
+        form.appendChild(input); 
+    });
+
+    console.log('Updated subject_id list:', selectedSubjects);
+}
+
+    function showSubjectList() {
+        subjectList.style.display = 'block';
+    }
+
+    subjectList.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('subject-option')) {
+            const subjectId = e.target.getAttribute('data-id');
+            const subjectName = e.target.getAttribute('data-name');
+
+            if (!selectedSubjects.includes(subjectId)) {
+                selectedSubjects.push(subjectId);
+                const selectedSubjectDiv = document.createElement('div');
+                selectedSubjectDiv.classList.add('selected-subject');
+                selectedSubjectDiv.setAttribute('data-id', subjectId);
+                selectedSubjectDiv.innerHTML = `${subjectName} <button class="remove-subject-btn">X</button>`;
+                selectedSubjectsContainer.appendChild(selectedSubjectDiv);
+
+                updateSubjectIds(); 
+                subjectList.style.display = 'none';  
+            }
+        }
+    });
+
+    selectedSubjectsContainer.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('remove-subject-btn')) {
+            const selectedSubjectDiv = e.target.closest('.selected-subject');
+            const subjectId = selectedSubjectDiv.getAttribute('data-id');
+            selectedSubjects = selectedSubjects.filter(id => id !== subjectId);
+            selectedSubjectsContainer.removeChild(selectedSubjectDiv);
+            updateSubjectIds(); 
+        }
+    });
+
+    form.addEventListener('submit', function (event) {
+        updateSubjectIds(); 
+
+        if (selectedSubjects.length === 0) {
+            alert("Lūdzu izvēlieties vismaz vienu mācību priekšmetu.");
+            event.preventDefault();  
+        }
+    });
+});
+
+</script>
+@endsection('script')
+
+
+
+
+
+
 @section('content')
 <div class="container">
     <h1>Pievienot jaunu privātskolotāju</h1>
@@ -12,36 +92,53 @@
             </div>
         @endif
 
-    <form action="{{ route('teacherCreation.store') }}" method="POST" enctype="multipart/form-data">
-        @csrf
 
-        <div class="form-group">
-            <label for="name">Vārds</label>
-            <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
-            @error('name')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
-        <div class="form-group">
-            <label for="surname">Uzvārds</label>
-            <input type="text" class="form-control @error('surname') is-invalid @enderror" id="surname" name="surname" value="{{ old('surname') }}" required>
-            @error('surname')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-        </div>
 
-        <div class="form-group">
-            <label for="gads">Mācību priekšmets</label>
-            <select class="form-control @error('subject_id') is-invalid @enderror" id="subject_id" name="subject_id" required>
-            <option value="">Izvēlēties...</option>
+<form action="{{ route('teacherCreation.store') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+
+    <div class="form-group">
+        <label for="name">Vārds</label>
+        <input type="text" class="form-control @error('name') is-invalid @enderror" id="name" name="name" value="{{ old('name') }}" required>
+        @error('name')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="form-group">
+        <label for="surname">Uzvārds</label>
+        <input type="text" class="form-control @error('surname') is-invalid @enderror" id="surname" name="surname" value="{{ old('surname') }}" required>
+        @error('surname')
+            <div class="invalid-feedback">{{ $message }}</div>
+        @enderror
+    </div>
+
+    <div class="form-group">
+        <label for="subject_id">Mācību priekšmeti</label>
+        <div id="selected-subjects"></div>
+        <button type="button" id="add-subject-btn" class="btn btn-secondary mt-2">Pievienot priekšmetu</button>
+
+        <div id="subject-list" style="display:none;">
             @foreach($subjects as $subject)
-            <option value="{{ $subject->id }}" {{ old('subject_id') == $subject->id ? 'selected' : '' }}>
-            {{ $subject->name }}
-            </option>
-             @endforeach
-            </select>
+                <div class="subject-option" 
+                     data-id="{{ $subject->id }}" 
+                     data-name="{{ $subject->name }}" 
+                     style="cursor: pointer; padding: 10px; border: 1px solid #ddd; margin-bottom: 5px; border-radius: 4px; transition: background-color 0.3s;">
+                    {{ $subject->name }}
+                </div>
+            @endforeach
         </div>
+    </div>
 
         <div class="form-group">
         <label for="contact_info">Kontaktinformācija</label>
@@ -86,6 +183,7 @@
         <button type="submit" class="btn btn-primary">Pievienot</button>
     </form>
 </div>
+
 
 
 @endsection

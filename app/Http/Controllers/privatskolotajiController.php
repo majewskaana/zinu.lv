@@ -34,6 +34,9 @@ class privatskolotajiController extends Controller
 
     public function store(Request $request)
 {
+
+    \Log::debug('Form data:', $request->all());
+
     $request->validate([
         'name' => 'required|string',
         'surname' => 'required|string',
@@ -42,13 +45,14 @@ class privatskolotajiController extends Controller
         'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         'material_style' => 'required|string',
         'about_private_teacher' => 'required|string',
-        'subject_id' => 'required|exists:subjects,id',
+        'subject_id' => 'required|array|min:1', 
+        'subject_id.*' => 'exists:subjects,id', 
     ]);
 
     $image = null;
-    if ($request->hasFile('image')) {
-        $image = $request->file('image');
-    }
+if ($request->hasFile('image')) {
+    $image = $request->file('image')->store('public/images'); 
+}
 
     $teacher = PrivateTeacher::create([
         'name' => $request->name,
@@ -58,10 +62,15 @@ class privatskolotajiController extends Controller
         'image_path' => $image,
         'material_style' => $request->material_style,
         'about_private_teacher' => $request->about_private_teacher,
-        'subject_id' => $request->subject_id,
     ]);
+
+    if ($request->has('subject_id') && is_array($request->subject_id)) {
+    $teacher->macibuPrieksmeti()->attach($request->subject_id);
+}
+
 
     return redirect()->route('teacherCreation.create')->with('success', 'Privātskolotājs ir veiksmīgi pievienots!');
 }
+
 
 }

@@ -3,6 +3,29 @@
 <title>Pievienot mācību priekšmetu</title>
 @endsection
 
+@section('script')
+<script>
+    function addTheme() {
+        const container = document.getElementById('themes-container');
+        const themeGroup = document.createElement('div');
+        themeGroup.className = 'mb-3 theme-group';
+
+        themeGroup.innerHTML = `
+            <label for="theme_name[]" class="form-label">Tēma</label>
+            <input type="text" name="theme_name[]" class="form-control" required>
+            <button type="button" class="btn btn-danger btn-sm mt-2 remove-theme" onclick="removeTheme(this)">Noņemt</button>
+        `;
+
+        container.appendChild(themeGroup);
+    }
+
+    function removeTheme(button) {
+        button.parentElement.remove();
+    }
+</script>
+@endsection('script')
+
+
 @section('content')
 <div class="container mt-5">
         <h1>Pievienot jaunu mācību priekšmetu</h1>
@@ -45,25 +68,7 @@
     <button type="submit" class="btn btn-primary">Saglabāt</button>
 </form>
 
-<script>
-    function addTheme() {
-        const container = document.getElementById('themes-container');
-        const themeGroup = document.createElement('div');
-        themeGroup.className = 'mb-3 theme-group';
 
-        themeGroup.innerHTML = `
-            <label for="theme_name[]" class="form-label">Tēma</label>
-            <input type="text" name="theme_name[]" class="form-control" required>
-            <button type="button" class="btn btn-danger btn-sm mt-2 remove-theme" onclick="removeTheme(this)">Noņemt</button>
-        `;
-
-        container.appendChild(themeGroup);
-    }
-
-    function removeTheme(button) {
-        button.parentElement.remove();
-    }
-</script>
 </div>
 @endsection
 
