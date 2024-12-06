@@ -18,12 +18,12 @@ class Exam extends Model
 
     public function macibuPrieksmets()
     {
-        return $this->belongsTo(Subjects::class);
+        return $this->belongsTo(Subjects::class, 'macibu_prieksmets_id');
     }
 
     public function uzdevums()
     {
-        return $this->belongsTo(Tasks::class);
+        return $this->hasMany(Tasks::class, 'exam_id');
     }
 
     public function attended()

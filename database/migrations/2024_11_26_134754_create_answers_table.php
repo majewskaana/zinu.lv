@@ -15,7 +15,10 @@ return new class extends Migration
     {
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->text('text'); 
+            $table->boolean('is_correct');
+            $table->foreignId('task_id')->constrained('tasks'); 
+            $table->timestamps(); 
         });
     }
 

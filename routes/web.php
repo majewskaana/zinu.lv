@@ -19,10 +19,17 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/privatskolotaji', [privatskolotajiController::class, 'index'])->name('privatskolotaji');
 Route::get('/sadarbiba', [privatskolotajiController::class, 'sadarbiba'])->name('sadarbiba');
-Route::get('/exam', [eksamensController::class, 'index'])->name('exam');
+Route::get('/exams', [eksamensController::class, 'index'])->name('examList');
 
-Route::get('/exam/create', [eksamensController::class, 'create'])->name('examCreation.create');
-
+Route::middleware(['auth'])->group(function () {
+    
+    Route::get('/exams/create', [eksamensController::class, 'create'])->name('examCreation.create');
+    Route::post('/exams', [eksamensController::class, 'store'])->name('examCreation.store');
+    Route::get('/exams/{id}/edit', [eksamensController::class, 'edit'])->name('examEdit.edit');
+    Route::put('/exams/{id}', [eksamensController::class, 'update'])->name('examEdit.update');
+    Route::delete('/exams/{id}', [eksamensController::class, 'destroy'])->name('examEdit.destroy');
+    Route::get('/exams/{id}', [eksamensController::class, 'show'])->name('examDetails');
+});
 Route::get('/get-themes', function (Request $request) {
     $subjectId = $request->input('subject_id');
 

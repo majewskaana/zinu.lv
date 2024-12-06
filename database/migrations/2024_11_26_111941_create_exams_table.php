@@ -18,7 +18,6 @@ return new class extends Migration
             $table->year('gads');
             $table->string('limenis');
             $table->foreignId('macibu_prieksmets_id')->constrained('subjects')->nullable();
-            $table->foreignId('uzdevums')->constrained('tasks')->nullable();
             $table->timestamps();
         });
     }

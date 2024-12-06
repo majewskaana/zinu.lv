@@ -34,7 +34,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $exam->gads }}</td>
-                        <td>{{ $exam->subject->name }}</td>
+                        <td>{{ $exam->macibuPrieksmets->name }}</td>
                         <td>{{ $exam->limenis }}</td>
                         <td>
                             @if (Auth::user()->usertype == 'admin')

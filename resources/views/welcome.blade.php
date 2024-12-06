@@ -63,7 +63,7 @@
 
                         <div class="p-6 border-t border-gray-200 dark:border-gray-700">
                         <div class="flex items-center">
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('exam') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Nokārtot eksāmenu</a></div>
+                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('examList') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Nokārtot eksāmenu</a></div>
                             </div>
 
                             <div class="ml-12">

@@ -17,7 +17,8 @@ return new class extends Migration
             $table->id();
             $table->string('text');
             $table->foreignId('subject_id')->constrained('subjects');
-            $table->foreignId('theme_id')->constrained('themes');
+            $table->foreignId('exam_id')->constrained('exams')->onDelete('cascade');
+            $table->foreignId('theme_id')->constrained('themes')->onDelete('cascade');
             $table->timestamps();            
         });
     }

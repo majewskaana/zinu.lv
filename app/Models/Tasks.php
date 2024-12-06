@@ -11,7 +11,9 @@ class Tasks extends Model
 
     protected $fillable = [
         'text',
-        'tema_id',
+        'theme_id',   
+        'subject_id',
+        'exam_id',
     ];
 
     public function theme()
@@ -21,6 +23,11 @@ class Tasks extends Model
 
     public function eksameni()
     {
-        return $this->hasMany(Exam::class, 'uzdevums_id');
+        return $this->belongsTo(Exam::class);
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answers::class, 'task_id');
     }
 }
