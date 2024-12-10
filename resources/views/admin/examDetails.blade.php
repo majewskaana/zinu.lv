@@ -11,11 +11,11 @@
     <p><strong>Līmenis:</strong> {{ $exam->limenis }}</p>
     
     <h2>Uzdevumi</h2>
-    @if ($exam->uzdevums->isEmpty())
+    @if ($exam->tasks->isEmpty())
         <p>Nav pievienoti uzdevumi.</p>
     @else
         <ul>
-            @foreach ($exam->uzdevums as $task)
+            @foreach ($exam->tasks as $task)
                 <li>
                     {{ $task->text }}
                     <ul>

@@ -28,7 +28,7 @@
             <div class="card-body p-6">
                 <div class="flex items-center">
                     <div class="ml-4 text-lg leading-7 font-semibold">
-                        <a href="{{ route('examCreation.create') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Jauns eksāmens</a>
+                        <a href="{{ route('examList') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Visi eksāmeni</a>
                     </div>
                 </div>
                 <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">

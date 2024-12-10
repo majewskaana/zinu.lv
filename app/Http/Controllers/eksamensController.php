@@ -8,6 +8,7 @@ use App\Models\Exam;
 use App\Models\Answers;
 use App\Models\Tasks;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class eksamensController extends Controller
 {
@@ -50,40 +51,45 @@ class eksamensController extends Controller
 }
 public function store(Request $request)
 {
-    // Валидация данных
-    $request->validate([
-        'gads' => 'required|date_format:Y',
-        'uzdevums' => 'required|string',
-        'limenis' => 'required|string',
-        'tema_id' => 'required|exists:themes,id',
+
+    $validated = $request->validate([
+        'gads' => 'required|numeric',
+        'limenis' => 'required|string|max:255',
         'subject_id' => 'required|exists:subjects,id',
-        'variants' => 'required|array',
-        'correct_variant' => 'required|integer|in:0,' . (count($request->variants) - 1),
+        'tasks' => 'required|array',
+        'tasks.*.text' => 'required|string|max:255',
+        'tasks.*.tema_id' => 'required|exists:themes,id',
+        'tasks.*.variants' => 'required|array',
+        'tasks.*.variants.*' => 'required|string|max:255',
+        'tasks.*.correct_variant' => 'required|numeric',
     ]);
 
     $exam = Exam::create([
-        'gads' => $request->gads,
-        'limenis' => $request->limenis,
-        'macibu_prieksmets_id' => $request->subject_id,
+        'gads' => $validated['gads'],
+        'limenis' => $validated['limenis'],
+        'macibu_prieksmets_id' => $validated['subject_id'],
     ]);
 
-    $task = Tasks::create([
-        'text' => $request->uzdevums,
-        'subject_id' => $request->subject_id,
-        'theme_id' => $request->tema_id,
-        'exam_id' => $exam->id,
-    ]);
-
-    foreach ($request->variants as $index => $variant) {
-        $answer = new Answers([
-            'text' => $variant,
-            'is_correct' => $index == $request->correct_variant,
+    foreach ($validated['tasks'] as $taskData) {
+        $task = $exam->tasks()->create([
+            'text' => $taskData['text'],
+            'theme_id' => $taskData['tema_id'],
+            'subject_id' => $validated['subject_id'],
         ]);
-        $task->answers()->save($answer);
+
+        foreach ($taskData['variants'] as $index => $variant) {
+            $isCorrect = $index == $taskData['correct_variant'];
+            $task->answers()->create([
+                'text' => $variant,
+                'is_correct' => $isCorrect,
+            ]);
+        }
     }
 
-    return redirect()->route('examList')->with('success', 'Eksāmens ir veiksmīgi pievienots!');
+    return redirect()->route('examList')->with('success', 'Eksāmens tika veiksmīgi pievienots!');
 }
+
+
 
 public function edit($id)
     {
@@ -93,23 +99,74 @@ public function edit($id)
     }
 
     public function update(Request $request, $id)
-    {
-        $exam = Exam::findOrFail($id);
+{
+    $exam = Exam::findOrFail($id);
 
-        $request->validate([
-            'gads' => 'required|date_format:Y',
-            'limenis' => 'required|string',
-            'subject_id' => 'required|exists:subjects,id',
-        ]);
+    $exam->update([
+        'gads' => $request->gads,
+        'limenis' => $request->limenis,
+        'macibu_prieksmets_id' => $request->macibu_prieksmets_id,
+    ]);
 
-        $exam->update([
-            'gads' => $request->gads,
-            'limenis' => $request->limenis,
-            'macibu_prieksmets_id' => $request->subject_id,
-        ]);
+    if ($request->has('tasks')) {
+        foreach ($request->tasks as $taskId => $taskData) {
+            $task = Tasks::findOrFail($taskId);
+            $task->update([
+                'text' => $taskData['text'],
+            ]);
 
-        return redirect()->route('examList')->with('success', 'Eksāmens veiksmīgi atjaunināts!');
+            if (isset($taskData['answers'])) {
+                foreach ($taskData['answers'] as $answerId => $answerData) {
+                    $answer = Answers::findOrFail($answerId);
+
+                    $isCorrect = isset($answerData['is_correct']) && $answerData['is_correct'] === 'on';
+
+                    $answer->update([
+                        'text' => $answerData['text'],
+                        'is_correct' => $isCorrect,
+                    ]);
+                }
+            }
+        }
     }
+
+    if ($request->has('new_tasks')) {
+        foreach ($request->new_tasks as $newTask) {
+            $task = $exam->tasks()->create([
+                'text' => $newTask['text'],
+            ]);
+
+            if (isset($newTask['answers'])) {
+                foreach ($newTask['answers'] as $newAnswer) {
+
+                    $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
+
+                    $task->answers()->create([
+                        'text' => $newAnswer['text'],
+                        'is_correct' => $isCorrect,
+                    ]);
+                }
+            }
+        }
+    }
+
+    if ($request->has('new_answers')) {
+        foreach ($request->new_answers as $taskId => $answers) {
+            $task = Tasks::findOrFail($taskId);
+            foreach ($answers as $newAnswer) {
+                $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
+                $task->answers()->create([
+                    'text' => $newAnswer['text'],
+                    'is_correct' => $isCorrect,
+                ]);
+            }
+        }
+    }
+
+    return redirect()->route('examList')->with('success', 'Eksāmens atjaunināts!');
+}
+
+
 
     public function destroy($id)
     {
@@ -121,7 +178,7 @@ public function edit($id)
 
     public function show($id)
     {
-        $exam = Exam::with('uzdevums.answers')->findOrFail($id);
+        $exam = Exam::with('tasks.answers')->findOrFail($id);
 
         if (Auth::user()->usertype == 'admin') {
             return view('admin.examDetails', compact('exam'));

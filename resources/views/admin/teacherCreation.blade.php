@@ -29,7 +29,6 @@ function updateSubjectIds() {
         form.appendChild(input); 
     });
 
-    console.log('Updated subject_id list:', selectedSubjects);
 }
 
     function showSubjectList() {

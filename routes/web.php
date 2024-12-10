@@ -19,10 +19,10 @@ Route::get('/home', [HomeController::class, 'index'])->name('home');
 
 Route::get('/privatskolotaji', [privatskolotajiController::class, 'index'])->name('privatskolotaji');
 Route::get('/sadarbiba', [privatskolotajiController::class, 'sadarbiba'])->name('sadarbiba');
-Route::get('/exams', [eksamensController::class, 'index'])->name('examList');
+
 
 Route::middleware(['auth'])->group(function () {
-    
+    Route::get('/exams', [eksamensController::class, 'index'])->name('examList');
     Route::get('/exams/create', [eksamensController::class, 'create'])->name('examCreation.create');
     Route::post('/exams', [eksamensController::class, 'store'])->name('examCreation.store');
     Route::get('/exams/{id}/edit', [eksamensController::class, 'edit'])->name('examEdit.edit');
@@ -32,21 +32,10 @@ Route::middleware(['auth'])->group(function () {
 });
 Route::get('/get-themes', function (Request $request) {
     $subjectId = $request->input('subject_id');
+    $themes = Theme::where('macibu_prieksmets_id', $subjectId)->get();
 
-    if (!$subjectId) {
-        return response()->json(['error' => 'Subject ID not provided'], 400);
-    }
-    try {
-        $themes = Theme::where('macibu_prieksmets_id', $subjectId)->get();
-        
-        if ($themes->isEmpty()) {
-            return response()->json(['error' => 'No themes found for this subject'], 404);
-        }
-        return response()->json(['themes' => $themes]);
-    } catch (\Exception $e) {
-        \Log::error('Error loading themes: ' . $e->getMessage());
-        return response()->json(['error' => 'Something went wrong'], 500);
-    }
+    return response()->json(['themes' => $themes]);
+    
 });
 
 

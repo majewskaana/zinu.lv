@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class Theme extends Model
 {
     use HasFactory;
-
     protected $fillable = [
         'text',
         'macibu_prieksmets_id',
@@ -23,4 +22,5 @@ class Theme extends Model
     {
         return $this->hasMany(Tasks::class, 'tema_id');
     }
+
 }

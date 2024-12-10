@@ -21,7 +21,7 @@ class Exam extends Model
         return $this->belongsTo(Subjects::class, 'macibu_prieksmets_id');
     }
 
-    public function uzdevums()
+    public function tasks()
     {
         return $this->hasMany(Tasks::class, 'exam_id');
     }

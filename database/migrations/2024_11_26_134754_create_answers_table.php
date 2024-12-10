@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('text'); 
             $table->boolean('is_correct');
-            $table->foreignId('task_id')->constrained('tasks'); 
+            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade'); 
             $table->timestamps(); 
         });
     }

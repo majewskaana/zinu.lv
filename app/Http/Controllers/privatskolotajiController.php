@@ -35,8 +35,6 @@ class privatskolotajiController extends Controller
     public function store(Request $request)
 {
 
-    \Log::debug('Form data:', $request->all());
-
     $request->validate([
         'name' => 'required|string',
         'surname' => 'required|string',

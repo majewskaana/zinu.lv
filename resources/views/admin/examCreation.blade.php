@@ -7,49 +7,88 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
+$(document).ready(function() {
 
-    $('#subject_id').change(function() {
-        var subjectId = $(this).val();
+    function updateThemes(selectSubject, targetThemeSelect) {
+        var subjectId = selectSubject.val();
         if (subjectId) {
             $.ajax({
                 url: '/get-themes',
                 type: 'GET',
                 data: { subject_id: subjectId },
                 success: function(response) {
-                    $('#tema_id').empty();
-
-                    $('#tema_id').append('<option value="">Izvēlēties...</option>');
-
+                    targetThemeSelect.empty();
+                    targetThemeSelect.append('<option value="">Izvēlēties...</option>');
                     $.each(response.themes, function(index, theme) {
-                        $('#tema_id').append('<option value="' + theme.id + '">' + theme.text + '</option>');
+                        targetThemeSelect.append('<option value="' + theme.id + '">' + theme.text + '</option>');
                     });
                 },
-                error: function(xhr, status, error) {
-                    console.error('Error:', status, error); 
-                    alert('Nesanāca atrast tēmas!');
+                error: function() {
+                    alert('Kļūda: neizdevās ielādēt tēmas.');
                 }
             });
         } else {
-            $('#tema_id').empty().append('<option value="">Izvēlēties...</option>');
+            targetThemeSelect.empty().append('<option value="">Izvēlēties...</option>');
         }
-    });
+    }
 
-
-document.getElementById('add_variant').addEventListener('click', function() {
-        const variantsDiv = document.getElementById('variants');
-        const newVariantGroup = document.createElement('div');
-        newVariantGroup.classList.add('variant-group', 'mb-3');
-        newVariantGroup.innerHTML = `
-            <input type="text" class="form-control mb-2" name="variants[]" placeholder="Atbilde">
-            <input type="radio" name="correct_variant" value="${variantsDiv.children.length}"> Pareizā
+    $('#add_task').on('click', function() {
+        var taskIndex = $('.task-block').length;
+        var newTask = `
+            <div class="task-block mb-4 border p-3">
+                <h4>Uzdevums ${taskIndex + 1}</h4>
+                <div class="form-group">
+                    <label for="subject_id_${taskIndex}">Mācību priekšmets</label>
+                    <select class="form-control subject-select" id="subject_id_${taskIndex}" name="tasks[${taskIndex}][subject_id]" required>
+                        <option value="">Izvēlēties...</option>
+                        @foreach($subjects as $subject)
+                            <option value="{{ $subject->id }}">{{ $subject->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tema_id_${taskIndex}">Uzdevuma tēma</label>
+                    <select class="form-control theme-select" id="tema_id_${taskIndex}" name="tasks[${taskIndex}][tema_id]" required>
+                        <option value="">Izvēlēties...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="uzdevums_${taskIndex}">Uzdevums</label>
+                    <textarea class="form-control" id="uzdevums_${taskIndex}" name="tasks[${taskIndex}][text]" rows="2" required></textarea>
+                </div>
+                <label>Atbildes:</label>
+                <div id="variants_${taskIndex}" class="variants">
+                    <div class="variant-group mb-2">
+                        <input type="text" class="form-control mb-1" name="tasks[${taskIndex}][variants][]" placeholder="Atbilde">
+                        <input type="radio" name="tasks[${taskIndex}][correct_variant]" value="0"> Pareizā
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary add-variant" data-task-index="${taskIndex}">Pievienot variantu</button>
+            </div>
         `;
-        variantsDiv.appendChild(newVariantGroup);
+        $('#tasks_container').append(newTask);
     });
 
+    $(document).on('change', '.subject-select', function() {
+        var subjectSelect = $(this);
+        var themeSelect = subjectSelect.closest('.task-block').find('.theme-select');
+        updateThemes(subjectSelect, themeSelect);
+    });
 
-
+    $(document).on('click', '.add-variant', function() {
+        var taskIndex = $(this).data('task-index');
+        var variantsDiv = $(`#variants_${taskIndex}`);
+        var variantIndex = variantsDiv.children().length;
+        var newVariant = `
+            <div class="variant-group mb-2">
+                <input type="text" class="form-control mb-1" name="tasks[${taskIndex}][variants][]" placeholder="Atbilde">
+                <input type="radio" name="tasks[${taskIndex}][correct_variant]" value="${variantIndex}"> Pareizā
+            </div>
+        `;
+        variantsDiv.append(newVariant);
+    });
 });
+
 
 
     
@@ -67,6 +106,18 @@ document.getElementById('add_variant').addEventListener('click', function() {
                 {{ session('success') }}
             </div>
         @endif
+
+        @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+        
     <form action="{{ route('examCreation.store') }}" method="POST">
         @csrf
 
@@ -98,33 +149,10 @@ document.getElementById('add_variant').addEventListener('click', function() {
             @enderror
         </div>
 
-        <div class="form-group">
-            <label for="uzdevums">Jauns uzdevums</label>
-            <textarea class="form-control @error('uzdevums') is-invalid @enderror" id="uzdevums" name="uzdevums" rows="4" required>{{ old('uzdevums') }}</textarea>
-            @error('uzdevums')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-
-            <label for="tema_id">Uzdevuma tēma</label>
-            <select class="form-control @error('tema_id') is-invalid @enderror" id="tema_id" name="tema_id" required>
-                <option value="">Izvēlēties...</option>
-                @foreach($temas as $tema)
-                    <option value="{{ $tema->id }}" {{ old('tema_id') == $tema->id ? 'selected' : '' }}>{{ $tema->text }}</option>
-                @endforeach
-            </select>
-            @error('tema_id')
-                <div class="invalid-feedback">{{ $message }}</div>
-            @enderror
-
-            <label for="variants">Atbildes:</label>
-            <div id="variants">
-                <div class="variant-group mb-3">
-                    <input type="text" class="form-control mb-2" name="variants[]" placeholder="Atbilde">
-                    <input type="radio" name="correct_variant" value="0"> Pareizā
-                </div>
-            </div>
-            <button type="button" class="btn btn-secondary" id="add_variant">Pievienot jaunu variantu</button>
+        <div id="tasks_container">
+            
         </div>
+        <button type="button" class="btn btn-primary mb-3" id="add_task">Pievienot jaunu uzdevumu</button>
         <button type="submit" class="btn btn-primary">Pievienot</button>
     </form>
 </div>
