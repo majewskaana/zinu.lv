@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\privatskolotajiController;
 use App\Http\Controllers\eksamensController;
 use App\Http\Controllers\subjectController;
@@ -22,6 +23,9 @@ Route::get('/sadarbiba', [privatskolotajiController::class, 'sadarbiba'])->name(
 
 
 Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
     Route::get('/exams', [eksamensController::class, 'index'])->name('examList');
     Route::get('/exams/create', [eksamensController::class, 'create'])->name('examCreation.create');
     Route::post('/exams', [eksamensController::class, 'store'])->name('examCreation.store');
@@ -29,8 +33,10 @@ Route::middleware(['auth'])->group(function () {
     Route::put('/exams/{id}', [eksamensController::class, 'update'])->name('examEdit.update');
     Route::delete('/exams/{id}', [eksamensController::class, 'destroy'])->name('examEdit.destroy');
     Route::get('/exams/{id}', [eksamensController::class, 'show'])->name('examDetails');
+    Route::delete('/admin/exam/delete-task/{taskId}', [eksamensController::class, 'deleteTask']);
+    Route::delete('/admin/exam/delete-answer/{answerId}', [eksamensController::class, 'deleteAnswer']);
 });
-Route::get('/get-themes', function (Request $request) {
+    Route::get('/get-themes', function (Request $request) {
     $subjectId = $request->input('subject_id');
     $themes = Theme::where('macibu_prieksmets_id', $subjectId)->get();
 

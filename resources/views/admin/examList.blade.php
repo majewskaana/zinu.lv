@@ -37,7 +37,6 @@
                         <td>{{ $exam->macibuPrieksmets->name }}</td>
                         <td>{{ $exam->limenis }}</td>
                         <td>
-                            @if (Auth::user()->usertype == 'admin')
                                 <a href="{{ route('examDetails', $exam->id) }}" class="btn btn-info btn-sm">Skatīt</a>
                                 <a href="{{ route('examEdit.edit', $exam->id) }}" class="btn btn-warning btn-sm">Rediģēt</a>
                                 <form action="{{ route('examEdit.destroy', $exam->id) }}" method="POST" style="display: inline-block;">
@@ -45,9 +44,6 @@
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Vai tiešām vēlaties dzēst šo eksāmenu?')">Dzēst</button>
                                 </form>
-                            @else
-                                <span>{{ $exam->gads }} - {{ $exam->subject->name }}</span>
-                            @endif
                         </td>
                     </tr>
                 @endforeach

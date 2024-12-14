@@ -21,7 +21,7 @@ class eksamensController extends Controller
         if(Auth::id()){
             $usertype = Auth()->user()->usertype;
             
-            if ($usertype == 'user' || $usertype == 'admin') {
+            if ($usertype == 'admin') {
                 $exams = Exam::all();
                 return view('admin.examList', compact('exams'));
             }
@@ -55,7 +55,7 @@ public function store(Request $request)
     $validated = $request->validate([
         'gads' => 'required|numeric',
         'limenis' => 'required|string|max:255',
-        'subject_id' => 'required|exists:subjects,id',
+        'main_subject_id' => 'required|exists:subjects,id',
         'tasks' => 'required|array',
         'tasks.*.text' => 'required|string|max:255',
         'tasks.*.tema_id' => 'required|exists:themes,id',
@@ -67,14 +67,14 @@ public function store(Request $request)
     $exam = Exam::create([
         'gads' => $validated['gads'],
         'limenis' => $validated['limenis'],
-        'macibu_prieksmets_id' => $validated['subject_id'],
+        'macibu_prieksmets_id' => $validated['main_subject_id'],
     ]);
 
     foreach ($validated['tasks'] as $taskData) {
         $task = $exam->tasks()->create([
             'text' => $taskData['text'],
             'theme_id' => $taskData['tema_id'],
-            'subject_id' => $validated['subject_id'],
+            'subject_id' => $validated['main_subject_id'],
         ]);
 
         foreach ($taskData['variants'] as $index => $variant) {
@@ -91,7 +91,7 @@ public function store(Request $request)
 
 
 
-public function edit($id)
+    public function edit($id)
     {
         $exam = Exam::findOrFail($id);
         $subjects = Subjects::all();
@@ -108,6 +108,24 @@ public function edit($id)
         'macibu_prieksmets_id' => $request->macibu_prieksmets_id,
     ]);
 
+    if ($request->has('deleted_tasks')) {
+        foreach ($request->deleted_tasks as $taskId) {
+            $task = Tasks::find($taskId);
+            if ($task) {
+                $task->delete();
+            }
+        }
+    }
+
+    if ($request->has('deleted_answers')) {
+        foreach ($request->deleted_answers as $answerId) {
+            $answer = Answers::find($answerId);
+            if ($answer) {
+                $answer->delete();
+            }
+        }
+    }
+
     if ($request->has('tasks')) {
         foreach ($request->tasks as $taskId => $taskData) {
             $task = Tasks::findOrFail($taskId);
@@ -118,7 +136,6 @@ public function edit($id)
             if (isset($taskData['answers'])) {
                 foreach ($taskData['answers'] as $answerId => $answerData) {
                     $answer = Answers::findOrFail($answerId);
-
                     $isCorrect = isset($answerData['is_correct']) && $answerData['is_correct'] === 'on';
 
                     $answer->update([
@@ -138,9 +155,7 @@ public function edit($id)
 
             if (isset($newTask['answers'])) {
                 foreach ($newTask['answers'] as $newAnswer) {
-
                     $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
-
                     $task->answers()->create([
                         'text' => $newAnswer['text'],
                         'is_correct' => $isCorrect,
@@ -162,11 +177,25 @@ public function edit($id)
             }
         }
     }
-
-    return redirect()->route('examList')->with('success', 'Eksāmens atjaunināts!');
+    return redirect()->route('examList')->with('success', 'Eksāmens veiksmīgi atjaunināts!');
 }
 
 
+public function deleteTask($taskId)
+{
+    $task = Tasks::findOrFail($taskId);
+    $task->delete();
+
+    return response()->json(['success' => true]);
+}
+
+public function deleteAnswer($answerId)
+{
+    $answer = Answers::findOrFail($answerId);
+    $answer->delete();
+
+    return response()->json(['success' => true]);
+}
 
     public function destroy($id)
     {

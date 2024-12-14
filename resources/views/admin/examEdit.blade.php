@@ -1,67 +1,104 @@
 @extends('layouts.app')
 
 @section('title')
-<title>Rediģēt Eksāmenu un Uzdevumus</title>
+<title>Rediģēt eksāmenu</title>
 @endsection
 
 @section('script')
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        let taskCount = {{ $exam->tasks->count() }}; 
-        let newAnswerCounter = 0;
+$(document).ready(function() {
+    let taskCount = {{ $exam->tasks->count() }}; 
+    let newAnswerCounter = 0;
 
-        $(document).on('click', '.add_answer', function() {
-            const taskId = $(this).data('task');
-            const answersDiv = $(`#answers-${taskId}`);
-            const newAnswer = `
-                <div class="form-group ml-3">
-                    <label>Atbilde:</label>
-                    <input type="text" name="new_answers[${taskId}][${newAnswerCounter}][text]" class="form-control" placeholder="Jauna atbilde" required>
-                    <div class="form-check">
-                        <input type="checkbox" name="new_answers[${taskId}][${newAnswerCounter}][is_correct]" class="form-check-input">
-                        <label class="form-check-label">Pareizā atbilde</label>
-                    </div>
-                </div>
-            `;
-            answersDiv.append(newAnswer);
-            newAnswerCounter++;
-        });
-
-        $('#add_task').click(function() {
-            const newTask = `
-                <div class="card mb-3">
-                    <div class="card-body">
-                        <h5>Jauns Uzdevums</h5>
-                        <div class="form-group">
-                            <label>Uzdevuma teksts:</label>
-                            <input type="text" name="new_tasks[${taskCount}][text]" class="form-control" placeholder="Jauns uzdevums" required>
-                        </div>
-                        <h6>Atbildes:</h6>
-                        <div id="answers-new-${taskCount}">
-                            <div class="form-group ml-3">
-                                <label>Atbilde:</label>
-                                <input type="text" name="new_tasks[${taskCount}][answers][0][text]" class="form-control" placeholder="Jauna atbilde" required>
-                                <div class="form-check">
-                                    <input type="checkbox" name="new_tasks[${taskCount}][answers][0][is_correct]" class="form-check-input">
-                                    <label class="form-check-label">Pareizā atbilde</label>
-                                </div>
-                            </div>
-                        </div>
-                        <button type="button" class="btn btn-secondary add_answer" data-task="new-${taskCount}">Pievienot atbildi</button>
-                    </div>
-                </div>
-            `;
-            $('#tasks-container').append(newTask);
-            taskCount++;
-        });
+    $(document).on('change', 'input[type="radio"].form-check-input', function() {
+        const taskId = $(this).closest('.card').data('task');
+        toggleCorrectAnswer(this, taskId);
     });
+
+    function toggleCorrectAnswer(checkbox, taskId) {
+        $(`#answers-${taskId}`).find('input[type="radio"]').each(function() {
+            $(this).prop('checked', false); 
+        });
+
+        $(checkbox).prop('checked', true);
+    }
+
+    $(document).on('click', '.add_answer', function() {
+        const taskId = $(this).data('task');
+        const answersDiv = $(`#answers-${taskId}`);
+        const newAnswer = `
+            <div class="form-group ml-3" style="position: relative;" data-answer="${newAnswerCounter}">
+                <label>Atbilde:</label>
+                <input type="text" name="new_answers[${taskId}][${newAnswerCounter}][text]" class="form-control" placeholder="Jauna atbilde" required style="width: 70%; display: inline-block;">
+                <div class="form-check">
+                    <input type="radio" name="new_answers[${taskId}][correct_answer]" value="${newAnswerCounter}" class="form-check-input">
+                    <label class="form-check-label">Pareizā atbilde</label>
+                </div>
+                <span class="delete-answer" data-task="${taskId}" data-answer="${newAnswerCounter}" style="cursor:pointer; color:red; font-size: 20px; position: absolute; right: 5px; top: 25%;">&times;</span>
+            </div>
+        `;
+        answersDiv.append(newAnswer);
+        newAnswerCounter++;
+    });
+
+    $(document).on('click', '.delete_task', function() {
+        const taskId = $(this).data('task');
+        const taskElement = $(`div[data-task="${taskId}"]`);
+
+        if (confirm('Vai tiešām vēlaties dzēst šo uzdevumu?')) {
+            $.ajax({
+                url: '/admin/exam/delete-task/' + taskId,
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "task_id": taskId
+                },
+                success: function(response) {
+                    taskElement.remove();
+                },
+                error: function() {
+                    alert('Radās kļūda, dzēšot uzdevumu.');
+                }
+            });
+        }
+    });
+
+    $(document).on('click', '.delete-answer', function() {
+        const taskId = $(this).data('task');
+        const answerId = $(this).data('answer');
+        const answerElement = $(`#answers-${taskId}`).find(`.form-group[data-answer="${answerId}"]`);
+
+        if (confirm('Vai tiešām vēlaties dzēst šo atbildi?')) {
+            if (!answerId) {
+                answerElement.remove();
+                return;
+            }
+
+            $.ajax({
+                url: '/admin/exam/delete-answer/' + answerId, 
+                type: 'DELETE',
+                data: {
+                    "_token": "{{ csrf_token() }}",
+                    "answer_id": answerId
+                },
+                success: function(response) {
+                    answerElement.remove();
+                },
+                error: function() {
+                    alert('Radās kļūda, dzēšot atbildi.');
+                }
+            });
+        }
+    });
+});
+
 </script>
 @endsection
 
 @section('content')
 <div class="container mt-5">
-    <h1>Rediģēt Eksāmenu un Uzdevumus</h1>
+    <h1>Rediģēt eksāmenu</h1>
 
     @if ($errors->any())
         <div class="alert alert-danger">
@@ -120,17 +157,20 @@
                         <h6>Atbildes:</h6>
                         <div id="answers-{{ $task->id }}">
                             @foreach ($task->answers as $answer)
-                                <div class="form-group ml-3">
+                                <div class="form-group ml-3" style="position: relative;">
                                     <label>Atbilde:</label>
-                                    <input type="text" name="answers[{{ $answer->id }}][text]" class="form-control" value="{{ old('answers.' . $answer->id . '.text', $answer->text) }}" required>
+                                    <input type="text" name="answers[{{ $answer->id }}][text]" class="form-control" value="{{ old('answers.' . $answer->id . '.text', $answer->text) }}" required style="width: 70%; display: inline-block;">
                                     <div class="form-check">
-                                        <input type="checkbox" name="answers[{{ $answer->id }}][is_correct]" class="form-check-input" {{ $answer->is_correct ? 'checked' : '' }}>
-                                        <label class="form-check-label">Pareizā atbilde</label>
+                                    <input type="radio" name="tasks[{{ $task->id }}][correct_answer]" value="{{ $answer->id }}" class="form-check-input" {{ $answer->is_correct ? 'checked' : '' }}>
+                                    <label class="form-check-label">Pareizā atbilde</label>
                                     </div>
+                                    <span class="delete-answer" data-task="{{ $task->id }}" data-answer="{{ $answer->id }}" style="cursor:pointer; color:red; font-size: 20px; position: absolute; right: 5px; top: 25%;">&times;</span>
                                 </div>
                             @endforeach
                         </div>
+
                         <button type="button" class="btn btn-secondary add_answer" data-task="{{ $task->id }}">Pievienot atbildi</button>
+                        <button type="button" class="btn btn-danger delete_task" data-task="{{ $task->id }}">Dzēst uzdevumu</button>
                     </div>
                 </div>
             @endforeach

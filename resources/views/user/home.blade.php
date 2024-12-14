@@ -30,7 +30,7 @@
                 <div class="card-body">
                     <div class="p-6">
                             <div class="flex items-center">
-                            <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('exam') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Nokārtot eksāmenu</a></div>
+                            <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('examList') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Nokārtot eksāmenu</a></div>
                             </div>
 
                             <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
@@ -38,10 +38,24 @@
                                 </div>
                             </div>
                         </div>
-
-                    
                 </div>
-                
+                <div class="card">
+                <div class="card-header">Profils</div>
+
+                <div class="card-body">
+                    <div class="p-6">
+                            <div class="flex items-center">
+                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('profile.show') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Apskatīt savu profilu</a></div>
+                            </div>
+
+                            <div class="ml-12">
+                                <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
+                                    Tu vari arī pievienot savu pilsētu.
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
