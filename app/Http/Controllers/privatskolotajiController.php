@@ -5,6 +5,7 @@ use App\Models\Subjects;
 use App\Models\PrivateTeacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class privatskolotajiController extends Controller
 {
@@ -44,20 +45,15 @@ class privatskolotajiController extends Controller
         'material_style' => 'required|string',
         'about_private_teacher' => 'required|string',
         'subject_id' => 'required|array|min:1', 
-        'subject_id.*' => 'exists:subjects,id', 
+        'subject_id.*' => 'integer|exists:subjects,id', 
     ]);
-
-    $image = null;
-if ($request->hasFile('image')) {
-    $image = $request->file('image')->store('public/images'); 
-}
 
     $teacher = PrivateTeacher::create([
         'name' => $request->name,
         'surname' => $request->surname,
         'contact_info' => $request->contact_info,
         'city' => $request->city,
-        'image_path' => $image,
+        'image_path' => $request->image,
         'material_style' => $request->material_style,
         'about_private_teacher' => $request->about_private_teacher,
     ]);

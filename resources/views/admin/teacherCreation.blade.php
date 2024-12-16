@@ -10,26 +10,27 @@ document.addEventListener('DOMContentLoaded', function () {
     const selectedSubjectsContainer = document.getElementById('selected-subjects');
     const subjectList = document.getElementById('subject-list');
     const addSubjectButton = document.getElementById('add-subject-btn');
-    const form = document.querySelector('form');  
+    const form = document.getElementById('teacher-form');  
 
     addSubjectButton.addEventListener('click', function () {
         showSubjectList();
     });
 
-function updateSubjectIds() {
+    function updateSubjectIds() {
+
     const existingInputs = document.querySelectorAll('.subject-id-input');
     existingInputs.forEach(input => input.remove());
 
     selectedSubjects.forEach(subjectId => {
         const input = document.createElement('input');
         input.type = 'hidden';
-        input.name = 'subject_id[]';  
-        input.value = subjectId;      
+        input.name = 'subject_id[]';
+        input.value = subjectId;
         input.classList.add('subject-id-input');
-        form.appendChild(input); 
+        form.appendChild(input);
     });
-
 }
+
 
     function showSubjectList() {
         subjectList.style.display = 'block';
@@ -103,7 +104,7 @@ function updateSubjectIds() {
 @endif
 
 
-<form action="{{ route('teacherCreation.store') }}" method="POST" enctype="multipart/form-data">
+<form id="teacher-form" action="{{ route('teacherCreation.store') }}" method="POST" enctype="multipart/form-data">
     @csrf
 
     <div class="form-group">
