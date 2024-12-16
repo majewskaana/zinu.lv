@@ -32,7 +32,7 @@ $(document).ready(function() {
                 <label>Atbilde:</label>
                 <input type="text" name="new_answers[${taskId}][${newAnswerCounter}][text]" class="form-control" placeholder="Jauna atbilde" required style="width: 70%; display: inline-block;">
                 <div class="form-check">
-                    <input type="radio" name="new_answers[${taskId}][correct_answer]" value="${newAnswerCounter}" class="form-check-input">
+                    <input type="radio" name="tasks[${taskId}][correct_answer]" value="${newAnswerCounter}" class="form-check-input">
                     <label class="form-check-label">Pareizā atbilde</label>
                 </div>
                 <span class="delete-answer" data-task="${taskId}" data-answer="${newAnswerCounter}" style="cursor:pointer; color:red; font-size: 20px; position: absolute; right: 5px; top: 25%;">&times;</span>

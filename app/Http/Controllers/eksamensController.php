@@ -78,7 +78,7 @@ public function store(Request $request)
         ]);
 
         foreach ($taskData['variants'] as $index => $variant) {
-            $isCorrect = $index == $taskData['correct_variant'];
+            $isCorrect = ($index == $taskData['correct_variant']);
             $task->answers()->create([
                 'text' => $variant,
                 'is_correct' => $isCorrect,
@@ -108,40 +108,23 @@ public function store(Request $request)
         'macibu_prieksmets_id' => $request->macibu_prieksmets_id,
     ]);
 
-    if ($request->has('deleted_tasks')) {
-        foreach ($request->deleted_tasks as $taskId) {
-            $task = Tasks::find($taskId);
-            if ($task) {
-                $task->delete();
-            }
-        }
-    }
-
-    if ($request->has('deleted_answers')) {
-        foreach ($request->deleted_answers as $answerId) {
-            $answer = Answers::find($answerId);
-            if ($answer) {
-                $answer->delete();
-            }
-        }
-    }
-
     if ($request->has('tasks')) {
         foreach ($request->tasks as $taskId => $taskData) {
             $task = Tasks::findOrFail($taskId);
-            $task->update([
-                'text' => $taskData['text'],
-            ]);
+            $task->update(['text' => $taskData['text']]);
+
+            Answers::where('task_id', $task->id)->update(['is_correct' => false]);
+
+            if (isset($taskData['correct_answer'])) {
+                $correctAnswerId = $taskData['correct_answer'];
+                $answer = Answers::findOrFail($correctAnswerId);
+                $answer->update(['is_correct' => true]);
+            }
 
             if (isset($taskData['answers'])) {
                 foreach ($taskData['answers'] as $answerId => $answerData) {
                     $answer = Answers::findOrFail($answerId);
-                    $isCorrect = isset($answerData['is_correct']) && $answerData['is_correct'] === 'on';
-
-                    $answer->update([
-                        'text' => $answerData['text'],
-                        'is_correct' => $isCorrect,
-                    ]);
+                    $answer->update(['text' => $answerData['text']]);
                 }
             }
         }
@@ -149,26 +132,9 @@ public function store(Request $request)
 
     if ($request->has('new_tasks')) {
         foreach ($request->new_tasks as $newTask) {
-            $task = $exam->tasks()->create([
-                'text' => $newTask['text'],
-            ]);
+            $task = $exam->tasks()->create(['text' => $newTask['text']]);
 
-            if (isset($newTask['answers'])) {
-                foreach ($newTask['answers'] as $newAnswer) {
-                    $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
-                    $task->answers()->create([
-                        'text' => $newAnswer['text'],
-                        'is_correct' => $isCorrect,
-                    ]);
-                }
-            }
-        }
-    }
-
-    if ($request->has('new_answers')) {
-        foreach ($request->new_answers as $taskId => $answers) {
-            $task = Tasks::findOrFail($taskId);
-            foreach ($answers as $newAnswer) {
+            foreach ($newTask['answers'] as $newAnswer) {
                 $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
                 $task->answers()->create([
                     'text' => $newAnswer['text'],
@@ -177,8 +143,10 @@ public function store(Request $request)
             }
         }
     }
+
     return redirect()->route('examList')->with('success', 'Eksāmens veiksmīgi atjaunināts!');
 }
+
 
 
 public function deleteTask($taskId)
