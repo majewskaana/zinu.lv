@@ -5,7 +5,6 @@ use App\Models\Subjects;
 use App\Models\PrivateTeacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class privatskolotajiController extends Controller
 {
