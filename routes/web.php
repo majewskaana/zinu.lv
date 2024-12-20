@@ -17,8 +17,6 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
-
-Route::get('/privatskolotaji', [privatskolotajiController::class, 'index'])->name('privatskolotaji');
 Route::get('/sadarbiba', [privatskolotajiController::class, 'sadarbiba'])->name('sadarbiba');
 
 
@@ -57,5 +55,10 @@ Route::put('/subjects/{id}', [subjectController::class, 'update'])->name('subjec
 Route::delete('/subjects/{id}', [subjectController::class, 'destroy'])->name('subjectEdit.destroy');
 
 
+Route::get('/teachers', [privatskolotajiController::class, 'index'])->name('teacherList');
+Route::get('/teachers/{id}', [privatskolotajiController::class, 'show'])->name('teacher.profile');
 Route::get('/teacher/create', [privatskolotajiController::class, 'create'])->name('teacherCreation.create');
 Route::post('/teacher', [privatskolotajiController::class, 'store'])->name('teacherCreation.store');
+Route::get('/teachers/{id}/edit', [privatskolotajiController::class, 'edit'])->name('teacherEdit.edit');
+Route::put('/teachers/{id}', [privatskolotajiController::class, 'update'])->name('teacherEdit.update');
+Route::delete('/teachers/{id}', [privatskolotajiController::class, 'destroy'])->name('teacherEdit.destroy');

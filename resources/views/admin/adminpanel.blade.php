@@ -12,7 +12,7 @@
             <div class="card-body p-6">
                 <div class="flex items-center">
                     <div class="ml-4 text-lg leading-7 font-semibold">
-                        <a href="{{ route('teacherCreation.create') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Pievienot privātskolotājus</a>
+                        <a href="{{ route('teacherList') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Visi privātskolotāji</a>
                     </div>
                 </div>
                 <div class="ml-12">

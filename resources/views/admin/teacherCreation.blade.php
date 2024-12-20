@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const selectedSubjectDiv = document.createElement('div');
                 selectedSubjectDiv.classList.add('selected-subject');
                 selectedSubjectDiv.setAttribute('data-id', subjectId);
-                selectedSubjectDiv.innerHTML = `${subjectName} <button class="remove-subject-btn">X</button>`;
+                selectedSubjectDiv.innerHTML = `${subjectName} <button class="remove-subject-btn btn btn-sm btn-danger">X</button>`;
                 selectedSubjectsContainer.appendChild(selectedSubjectDiv);
 
                 updateSubjectIds(); 
@@ -142,7 +142,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         <div class="form-group">
         <label for="contact_info">Kontaktinformācija</label>
-            <textarea class="form-control @error('uzdevums') is-invalid @enderror" id="contact_info" name="contact_info" rows="4" required>{{ old('contact_info') }}</textarea>
+            <textarea class="form-control @error('contact_info') is-invalid @enderror" id="contact_info" name="contact_info" rows="4" required>{{ old('contact_info') }}</textarea>
             @error('contact_info')
                 <div class="invalid-feedback">{{ $message }}</div>
             @enderror

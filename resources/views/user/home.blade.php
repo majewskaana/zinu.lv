@@ -13,7 +13,7 @@
                 <div class="card-body">
                     <div class="p-6">
                             <div class="flex items-center">
-                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('privatskolotaji') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Privātskolotāju saraksts</a></div>
+                                <div class="ml-4 text-lg leading-7 font-semibold"><a href="{{ route('teacherList') }}" class="text-sm text-gray-700 dark:text-gray-500 underline">Privātskolotāju saraksts</a></div>
                             </div>
 
                             <div class="ml-12">
