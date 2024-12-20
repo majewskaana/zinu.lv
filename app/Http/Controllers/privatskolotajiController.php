@@ -30,8 +30,19 @@ class privatskolotajiController extends Controller
         }
 
         $teachers = $query->get(); 
-    
-        return view('teacherList', compact('teachers', 'subjects'));
+        if (Auth::id()) {
+            $usertype = Auth()->user()->usertype;
+            if($usertype == 'admin'){
+                return view('admin.teacherList', compact('teachers', 'subjects'));
+            }
+            else {
+                return view('teacherList', compact('teachers', 'subjects'));
+            }
+        }
+        else{
+            return view('teacherList', compact('teachers', 'subjects'));
+        }
+        
     }
     
     public function sadarbiba()
