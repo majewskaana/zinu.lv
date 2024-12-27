@@ -51,4 +51,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function completedExams()
+{
+    return $this->belongsToMany(Exam::class, 'user_exam')
+                ->withPivot('score', 'max_score', 'completed_at')
+                ->withTimestamps();
+}
+
 }

@@ -8,6 +8,7 @@ use App\Models\Exam;
 use App\Models\Answers;
 use App\Models\Tasks;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class eksamensController extends Controller
@@ -183,5 +184,54 @@ public function deleteAnswer($answerId)
             return redirect()->route('examList');
         }
     }
+
+    public function start($id)
+{
+    $exam = Exam::with('tasks.answers')->findOrFail($id);
+    return view('user.exam', compact('exam'));
+}
+
+public function submit(Request $request, $id)
+{
+    $exam = Exam::with('tasks.theme', 'tasks.answers')->findOrFail($id);
+
+    $results = [];
+    $score = 0;
+
+    foreach ($request->input('tasks', []) as $taskInput) {
+        $task = $exam->tasks->find($taskInput['id']);
+        $selectedAnswerId = $taskInput['answer'] ?? null;
+        $correctAnswer = $task->answers->firstWhere('is_correct', true);
+        $isCorrect = $selectedAnswerId && $correctAnswer && $selectedAnswerId == $correctAnswer->id;
+
+        $results[] = [
+            'task' => $task->text,
+            'yourAnswer' => $selectedAnswerId 
+                ? $task->answers->find($selectedAnswerId)->text 
+                : 'Nav atzīmēts',
+            'correctAnswer' => $correctAnswer->text ?? 'Nav pareizas atbildes',
+            'isCorrect' => $isCorrect,
+            'theme' => $task->theme->text ?? 'Nav tēmas',
+        ];
+
+        if ($isCorrect) {
+            $score++;
+        }
+    }
+
+    $topicsToReview = collect($results)
+        ->where('isCorrect', false)
+        ->pluck('theme')
+        ->unique();
+
+    Auth()->user()->completedExams()->attach($id, [
+        'score' => $score,
+        'max_score' => count($results),
+        'completed_at' => Carbon::now(),
+    ]);
+
+    return view('user.results', compact('results', 'score', 'topicsToReview', 'exam'));
+}
+
 
 }

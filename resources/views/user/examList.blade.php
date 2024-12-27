@@ -28,8 +28,9 @@
                         <td>{{ $exam->gads }}</td>
                         <td>{{ $exam->macibuPrieksmets->name }}</td>
                         <td>{{ $exam->limenis }}</td>
-                        <td>              
-                        <span>{{ $exam->gads }} - {{ $exam->macibuPrieksmets->name }}</span>
+                        <td>
+                        <a href="{{ route('exams.start', $exam->id) }}" class="btn btn-primary btn-sm">Nokārtot eksāmenu</a>
+                        </td>
                         </td>
                     </tr>
                 @endforeach

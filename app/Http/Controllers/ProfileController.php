@@ -40,7 +40,9 @@ class ProfileController extends Controller
 
     public function show()
 {
-    $user = Auth::user(); 
-    return view('profile', compact('user')); 
+    $user = Auth::user();
+    $completedExams = $user->completedExams()->with('macibuPrieksmets')->get();
+
+    return view('profile', compact('user', 'completedExams')); 
 }
 }

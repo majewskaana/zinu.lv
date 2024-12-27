@@ -15,8 +15,11 @@ return new class extends Migration
     {
         Schema::create('user_exam', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('lietotajs_id')->constrained('users');
-            $table->foreignId('eksamens_id')->constrained('exams');
+            $table->foreignId('user_id')->constrained('users');
+            $table->foreignId('exam_id')->constrained('exams');
+            $table->integer('score');
+            $table->integer('max_score');
+            $table->timestamp('completed_at');
             $table->timestamps();
         });
     }

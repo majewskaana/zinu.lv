@@ -46,6 +46,9 @@ Route::middleware(['auth'])->group(function () {
 
 
 Route::post('/exam', [eksamensController::class, 'store'])->name('examCreation.store');
+Route::get('/exams/{id}/start', [eksamensController::class, 'start'])->name('exams.start');
+Route::post('/exams/{id}/submit', [eksamensController::class, 'submit'])->name('exams.submit');
+
 
 Route::get('/subjects', [subjectController::class, 'index'])->name('subjects.index');
 Route::get('/subject/create', [subjectController::class, 'create'])->name('subjectCreation.create');
