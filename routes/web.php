@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\privatskolotajiController;
 use App\Http\Controllers\eksamensController;
 use App\Http\Controllers\subjectController;
+use App\Http\Controllers\FeedbackController;
 use App\Models\Theme;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
@@ -24,6 +25,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::get('/profile/edit', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::put('/profile/update', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/exams', [eksamensController::class, 'index'])->name('examList');
     Route::get('/exams/create', [eksamensController::class, 'create'])->name('examCreation.create');
     Route::post('/exams', [eksamensController::class, 'store'])->name('examCreation.store');
@@ -65,3 +67,6 @@ Route::post('/teacher', [privatskolotajiController::class, 'store'])->name('teac
 Route::get('/teachers/{id}/edit', [privatskolotajiController::class, 'edit'])->name('teacherEdit.edit');
 Route::put('/teachers/{id}', [privatskolotajiController::class, 'update'])->name('teacherEdit.update');
 Route::delete('/teachers/{id}', [privatskolotajiController::class, 'destroy'])->name('teacherEdit.destroy');
+
+Route::post('/teachers/{teacher}/feedback', [FeedbackController::class, 'store'])->middleware('auth')->name('feedback.store');
+Route::delete('/feedback/{feedback}', [FeedbackController::class, 'destroy'])->middleware('auth')->name('feedback.destroy');

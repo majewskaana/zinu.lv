@@ -21,7 +21,7 @@ class PrivateTeacher extends Model
 
     public function feedbacks()
     {
-        return $this->hasMany(Feedback::class, 'privatskolotajs_id');
+        return $this->hasMany(Feedback::class, 'privateTeacher');
     }
 
     public function macibuPrieksmeti()

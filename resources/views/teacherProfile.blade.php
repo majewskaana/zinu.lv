@@ -35,6 +35,43 @@
             <p><strong>Klase, kurai pasniegs:</strong> {{ $teacher->city }}</p>
             <p><strong>Līmenis:</strong> {{ $teacher->city }}</p>
         </div>
+
+        <div class="mt-5">
+    <h2>Atsauksmes</h2>
+
+    @forelse ($teacher->feedbacks as $feedback)
+        <div class="card mb-3">
+            <div class="card-body">
+                <p>{{ $feedback->text }}</p>                
+                @if(Auth::check() && (Auth::id() === $feedback->lietotajs->id || Auth::user()->usertype === 'admin'))
+                    <form action="{{ route('feedback.destroy', $feedback) }}" method="POST" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-sm btn-danger" 
+                                onclick="return confirm('Vai tiešām vēlaties dzēst šo atsauksmi?')">
+                            Dzēst
+                        </button>
+                    </form>
+                @endif
+            </div>
+        </div>
+    @empty
+        <p>Šim pasniedzējam vēl nav atsauksmju.</p>
+    @endforelse
+</div>
+@if(Auth::check())
+    <div class="mt-4">
+        <h3>Pievienot atsauksmi</h3>
+        <form action="{{ route('feedback.store', $teacher) }}" method="POST">
+            @csrf
+            <div class="form-group">
+                <textarea name="text" class="form-control" rows="3" placeholder="Ierakstiet savu atsauksmi..." required></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary mt-2">Pievienot</button>
+        </form>
+    </div>
+@endif
+
     </div>
 </div>
 @endsection

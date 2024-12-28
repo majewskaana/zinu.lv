@@ -45,4 +45,15 @@ class ProfileController extends Controller
 
     return view('profile', compact('user', 'completedExams')); 
 }
+
+public function destroy()
+{
+    $user = auth()->user();
+    auth()->logout();
+    $user->completedExams()->detach();
+    $user->delete();
+
+    return redirect('/');
+}
+
 }

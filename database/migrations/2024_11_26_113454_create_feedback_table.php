@@ -16,8 +16,8 @@ return new class extends Migration
         Schema::create('feedback', function (Blueprint $table) {
             $table->id();
             $table->string('text');
-            $table->foreignId('privateTeacher')->constrained('private_teachers');
-            $table->foreignId('leftUser')->constrained('users');
+            $table->foreignId('privateTeacher')->constrained('private_teachers')->onDelete('cascade');
+            $table->foreignId('leftUser')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
     }

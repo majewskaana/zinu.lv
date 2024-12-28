@@ -17,11 +17,11 @@ class Feedback extends Model
 
     public function lietotajs()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'leftUser');
     }
 
     public function privatskolotajs()
     {
-        return $this->belongsTo(PrivateTeacher::class);
+        return $this->belongsTo(PrivateTeacher::class, 'privatskolotajs_id');
     }
 }

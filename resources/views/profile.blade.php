@@ -8,6 +8,12 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
+                @if (session('success'))
+            <div class="alert alert-success">
+                {{ session('success') }}
+            </div>
+                @endif
+
             <div class="card">
                 <div class="card-header">Mans profils</div>
 
@@ -31,9 +37,18 @@
                         </tr>
                     </table>
 
-                    <div class="mt-3">
+                    <div class="mt-3 d-flex justify-content-between">
                         <a href="{{ route('profile.edit') }}" class="btn btn-primary">Rediģēt profilu</a>
+
+                        <form action="{{ route('profile.destroy') }}" method="POST" onsubmit="return confirm('Vai tiešām vēlaties dzēst savu profilu? Šo darbību nevar atsaukt.')">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Dzēst profilu</button>
+                        </form>
                     </div>
+
+
+
                 </div>
             </div>
 
