@@ -17,7 +17,7 @@
                 </div>
                 <div class="ml-12">
                     <div class="mt-2 text-gray-600 dark:text-gray-400 text-sm">
-                        Mūsu vietne piedāvā plašu privātskolotāju klāstu, lai Tu varētu veiksmīgi sagatavoties savam centralizētam eksāmenam.
+                        Pievienot jaunu privātskolotāju.
                     </div>
                 </div>
             </div>
