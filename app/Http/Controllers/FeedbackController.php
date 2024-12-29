@@ -11,7 +11,7 @@ class FeedbackController extends Controller
     public function store(Request $request, PrivateTeacher $teacher)
     {
         $request->validate([
-            'text' => 'required|string|max:1000',
+            'text' => 'required|string|max:10000',
         ]);
 
         $teacher->feedbacks()->create([

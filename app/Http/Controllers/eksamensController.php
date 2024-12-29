@@ -54,7 +54,7 @@ public function store(Request $request)
 {
 
     $validated = $request->validate([
-        'gads' => 'required|numeric',
+        'gads' => 'required|numeric|lte:' . date('Y'), 
         'limenis' => 'required|string|max:255',
         'main_subject_id' => 'required|exists:subjects,id',
         'tasks' => 'required|array',

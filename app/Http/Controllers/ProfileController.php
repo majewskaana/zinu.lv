@@ -16,10 +16,10 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
+            'name' => 'required|string|min:2|max:50',
+            'surname' => 'required|string|min:2|max:50',
             'email' => 'required|email|unique:users,email,' . Auth::id(),
-            'password' => 'nullable|min:8|confirmed',
+            'password' => 'nullable|min:8|max:24|confirmed',
             'city' => 'nullable|string|max:255',
         ]);
 

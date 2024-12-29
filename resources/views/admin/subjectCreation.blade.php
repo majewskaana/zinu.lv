@@ -36,6 +36,16 @@
             </div>
         @endif
 
+        @if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
+
         <form action="{{ route('subjectCreation.store') }}" method="POST">
     @csrf
 
@@ -64,7 +74,6 @@
         </div>
     </div>
     <button type="button" class="btn btn-secondary mb-3" onclick="addTheme()">Pievienot vēl vienu tēmu</button>
-
     <button type="submit" class="btn btn-primary">Saglabāt</button>
 </form>
 

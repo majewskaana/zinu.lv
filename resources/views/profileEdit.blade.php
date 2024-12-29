@@ -8,12 +8,6 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            @if (session('success'))
-                <div class="alert alert-success">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <div class="card">
                 <div class="card-header">Rediģēt profilu</div>
 
@@ -48,7 +42,7 @@
 
                         <div class="mb-3">
                             <label for="city" class="form-label">Pilsēta</label>
-                            <input id="city" type="text" class="form-control @error('city') is-invalid @enderror" name="city" value="{{ old('city', $user->city) }}" required autofocus>
+                            <input id="city" type="text" class="form-control @error('city') is-invalid @enderror" name="city" value="{{ old('city', $user->city) }}" >
                             @error('city')
                                 <span class="invalid-feedback">{{ $message }}</span>
                             @enderror
