@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Review;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,6 +43,16 @@ class ProfileController extends Controller
 {
     $user = Auth::user();
     $completedExams = $user->completedExams()->with('macibuPrieksmets')->get();
+
+    foreach ($completedExams as $exam) {
+        $completedAt = $exam->pivot->completed_at;
+
+        $exam->topicsToReview = Review::where('exam_id', $exam->id)
+                                      ->whereDate('created_at', '=', \Carbon\Carbon::parse($completedAt)->toDateString())
+                                      ->whereTime('created_at', '=', \Carbon\Carbon::parse($completedAt)->toTimeString())
+                                      ->pluck('topic')
+                                      ->toArray();
+    }
 
     return view('profile', compact('user', 'completedExams')); 
 }

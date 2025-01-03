@@ -64,8 +64,9 @@
                                 <tr>
                                     <th>#</th>
                                     <th>Eksāmens</th>
-                                    <th>Iegūtais / Maksimālais punktu skaits</th>
+                                    <th>Iegūtais / Maksimālais <br> punktu skaits</th>
                                     <th>Datums</th>
+                                    <th>Tēmas atkārtošanai</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -75,7 +76,17 @@
                                         <td>{{ $exam->gads }} - {{ $exam->macibuPrieksmets->name }}</td>
                                         <td>{{ $exam->pivot->score }} / {{ $exam->pivot->max_score }}</td>
                                         <td>{{ \Carbon\Carbon::parse($exam->pivot->completed_at)->format('d.m.Y H:i') }}</td>
-                                    </tr>
+                                        <td>
+                                            @if (!empty($exam->topicsToReview))
+                                                <ul>
+                                                    @foreach ($exam->topicsToReview as $topic)
+                                                        <li>{{ $topic }}</li>
+                                                    @endforeach
+                                                </ul>
+                                            @else
+                                                <span>Nav nepieciešams atkārtot</span>
+                                            @endif
+                                                </tr>
                                 @endforeach
                             </tbody>
                         </table>

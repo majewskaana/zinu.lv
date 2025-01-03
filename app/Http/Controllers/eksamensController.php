@@ -9,6 +9,7 @@ use App\Models\Answers;
 use App\Models\Tasks;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
+use App\Models\Review;
 use Illuminate\Support\Facades\Log;
 
 class eksamensController extends Controller
@@ -229,6 +230,13 @@ public function submit(Request $request, $id)
         'max_score' => count($results),
         'completed_at' => Carbon::now(),
     ]);
+
+    foreach ($topicsToReview as $topic) {
+        Review::create([
+            'exam_id' => $exam->id,
+            'topic' => $topic,
+        ]);
+    }
 
     return view('user.results', compact('results', 'score', 'topicsToReview', 'exam'));
 }
