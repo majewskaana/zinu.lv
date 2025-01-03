@@ -32,8 +32,12 @@
             @if($teacher->image_path)
                 <img src="{{ $teacher->image_path }}" alt="Teacher Image" class="img-fluid" style="max-width: 100%; height: auto;">
             @endif
-            <p><strong>Klase, kurai pasniegs:</strong> {{ $teacher->city }}</p>
-            <p><strong>Līmenis:</strong> {{ $teacher->city }}</p>
+            <p><strong>Priekšmeti:</strong><br>
+                @foreach($teacher->macibuPrieksmeti as $subject)
+                    {{ $subject->name }} ({{ $subject->form }})<br>
+                @endforeach
+            </p>
+
         </div>
 
         <div class="mt-5">
