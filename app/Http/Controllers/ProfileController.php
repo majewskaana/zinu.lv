@@ -31,7 +31,7 @@ class ProfileController extends Controller
         $user->city = $request->city;
 
         if ($request->filled('password')) {
-            $user->password = bcrypt($request->password);
+            $user->password = bcrypt($request->password); //Hash the provided password using the bcrypt function before storing it.
         }
 
         $user->save();
@@ -48,9 +48,10 @@ class ProfileController extends Controller
         $completedAt = $exam->pivot->completed_at;
 
         $exam->topicsToReview = Review::where('exam_id', $exam->id)
+                                      ->where('user_id', auth()->id())
                                       ->whereDate('created_at', '=', \Carbon\Carbon::parse($completedAt)->toDateString())
                                       ->whereTime('created_at', '=', \Carbon\Carbon::parse($completedAt)->toTimeString())
-                                      ->pluck('topic')
+                                      ->pluck('topic') // Retrieve only the 'topic' column values.
                                       ->toArray();
     }
 

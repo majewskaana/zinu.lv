@@ -56,12 +56,6 @@
                                 <button type="submit" class="btn btn-primary">
                                     Pierakstīties
                                 </button>
-
-                                @if (Route::has('password.request'))
-                                    <a class="btn btn-link" href="{{ route('password.request') }}">
-                                        Aizmirsāt paroli?
-                                    </a>
-                                @endif
                             </div>
                         </div>
                     </form>

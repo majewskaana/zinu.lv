@@ -87,10 +87,14 @@ public function update(Request $request, $id)
     ]);
 
     $existingThemes = $subject->themes; 
-    $updatedThemes = $request->theme_name ?? []; 
+    $updatedThemes = $request->theme_name ?? []; // Get the updated themes from the request, or use an empty array if not provided.
 
     $existingThemeIds = $existingThemes->pluck('id')->toArray();
+    // Filter out any empty values from the updated themes array (e.g., if user leaves some fields blank).
     $updatedThemeTexts = array_filter($updatedThemes); 
+
+    // Identify themes that should be deleted by comparing the existing themes with the updated ones.
+    // A theme is marked for deletion if its text does not exist in the updated theme texts.
     $toDelete = $existingThemes->filter(function ($theme) use ($updatedThemeTexts) {
         return !in_array($theme->text, $updatedThemeTexts); 
     });

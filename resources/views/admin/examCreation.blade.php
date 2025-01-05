@@ -9,16 +9,18 @@
 <script>
 $(document).ready(function() {
 
+    // Function to update themes based on selected subject
 function updateThemes(selectSubject, targetThemeSelect) {
-    var subjectId = selectSubject.val();
+    var subjectId = selectSubject.val(); // Get the selected subject ID
     if (subjectId) {
         $.ajax({
-            url: '/get-themes',
+            url: '/get-themes', // URL to fetch themes based on the selected subject
             type: 'GET',
-            data: { subject_id: subjectId },
+            data: { subject_id: subjectId }, // Send the selected subject ID to the server
             success: function(response) {
-                targetThemeSelect.empty();
+                targetThemeSelect.empty(); // Clear the current themes in the select box
                 targetThemeSelect.append('<option value="">Izvēlēties...</option>');
+                // Loop through the returned themes and populate the theme select dropdown
                 $.each(response.themes, function(index, theme) {
                     targetThemeSelect.append('<option value="' + theme.id + '">' + theme.text + '</option>');
                 });
@@ -33,9 +35,9 @@ function updateThemes(selectSubject, targetThemeSelect) {
 }
 
 $('#add_task').on('click', function() {
-    var taskIndex = $('.task-block').length;
-    var selectedSubjectId = $('#main_subject_id').val();
-    var subjectOptions = $('#main_subject_id').html();
+    var taskIndex = $('.task-block').length;  // Get the current number of tasks (used for unique task IDs)
+    var selectedSubjectId = $('#main_subject_id').val();  // Get the currently selected subject ID
+    var subjectOptions = $('#main_subject_id').html();  // Get the options of subjects in the dropdown
 
     var newTask = `
         <div class="task-block mb-4 border p-3" id="task_block_${taskIndex}">
@@ -80,6 +82,7 @@ $(document).on('click', '.delete-variant', function() {
     $(this).closest('.variant-group').remove();
 });
 
+// When the subject is changed, update the themes for that task
 $(document).on('change', '.subject-select', function() {
     var subjectSelect = $(this);
     var themeSelect = subjectSelect.closest('.task-block').find('.theme-select');

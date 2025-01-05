@@ -9,7 +9,13 @@
     <h1>{{ $teacher->name }} {{ $teacher->surname }}</h1>
 
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-4">
+            @if($teacher->image_path)
+                <img src="{{ asset('storage/' . $teacher->image_path) }}" alt="{{ $teacher->name }} {{ $teacher->surname }}" class="img-fluid profile-image"style="max-width: 200px;">
+            @endif
+        </div>
+
+        <div class="col-md-8">
             <p><strong>Materiāla pasniegšanas stils:</strong> {{ $teacher->material_style }}</p>
             <p><strong>Apraksts:</strong> {{ $teacher->about_private_teacher }}</p>
             <strong>Kontaktinformācija:</strong>
@@ -23,47 +29,42 @@
                 class="btn btn-primary">Pierakstīties</a>
                 <a href="{{ route('register', ['redirect_to' => route('teacher.profile', $teacher->id)]) }}"
                  class="btn btn-secondary">Reģistrēties</a>
-
             @endif
-        </div>
 
-        <div class="col-md-6">
             <p><strong>Pilsēta:</strong> {{ $teacher->city }}</p>
-            @if($teacher->image_path)
-                <img src="{{ $teacher->image_path }}" alt="Teacher Image" class="img-fluid" style="max-width: 100%; height: auto;">
-            @endif
             <p><strong>Priekšmeti:</strong><br>
                 @foreach($teacher->macibuPrieksmeti as $subject)
                     {{ $subject->name }} ({{ $subject->form }})<br>
                 @endforeach
             </p>
-
         </div>
+    </div>
 
-        <div class="mt-5">
-    <h2>Atsauksmes</h2>
+    <div class="mt-5">
+        <h2>Atsauksmes</h2>
 
-    @forelse ($teacher->feedbacks as $feedback)
-        <div class="card mb-3">
-            <div class="card-body">
-                <p>{{ $feedback->text }}</p>                
-                @if(Auth::check() && (Auth::id() === $feedback->lietotajs->id || Auth::user()->usertype === 'admin'))
-                    <form action="{{ route('feedback.destroy', $feedback) }}" method="POST" class="d-inline">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="btn btn-sm btn-danger" 
-                                onclick="return confirm('Vai tiešām vēlaties dzēst šo atsauksmi?')">
-                            Dzēst
-                        </button>
-                    </form>
-                @endif
+        @forelse ($teacher->feedbacks as $feedback)
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p>{{ $feedback->text }}</p>                
+                    @if(Auth::check() && (Auth::id() === $feedback->lietotajs->id || Auth::user()->usertype === 'admin'))
+                        <form action="{{ route('feedback.destroy', $feedback) }}" method="POST" class="d-inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-sm btn-danger" 
+                                    onclick="return confirm('Vai tiešām vēlaties dzēst šo atsauksmi?')">
+                                Dzēst
+                            </button>
+                        </form>
+                    @endif
+                </div>
             </div>
-        </div>
-    @empty
-        <p>Šim pasniedzējam vēl nav atsauksmju.</p>
-    @endforelse
-</div>
-@if(Auth::check())
+        @empty
+            <p>Šim pasniedzējam vēl nav atsauksmju.</p>
+        @endforelse
+    </div>
+
+    @if(Auth::check())
     <div class="mt-4">
         <h3>Pievienot atsauksmi</h3>
         <form action="{{ route('feedback.store', $teacher) }}" method="POST">
@@ -74,8 +75,12 @@
             <button type="submit" class="btn btn-primary mt-2">Pievienot</button>
         </form>
     </div>
-@endif
+    @endif
 
-    </div>
 </div>
+
+@endsection
+
+@section('styles')
+
 @endsection

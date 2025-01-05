@@ -53,16 +53,15 @@ class eksamensController extends Controller
 }
 public function store(Request $request)
 {
-
     $validated = $request->validate([
-        'gads' => 'required|numeric|lte:' . date('Y'), 
+        'gads' => 'required|numeric|lte:' . date('Y'), // Ensure year is numeric and not in the future
         'limenis' => 'required|string|max:255',
         'main_subject_id' => 'required|exists:subjects,id',
         'tasks' => 'required|array',
-        'tasks.*.text' => 'required|string|max:255',
+        'tasks.*.text' => 'required|string|max:255', // Each task must have a text field with a max length of 255
         'tasks.*.tema_id' => 'required|exists:themes,id',
-        'tasks.*.variants' => 'required|array',
-        'tasks.*.variants.*' => 'required|string|max:255',
+        'tasks.*.variants' => 'required|array', // Each task must have variants as an array
+        'tasks.*.variants.*' => 'required|string|max:255', // Each variant must be a string with a max length of 255
         'tasks.*.correct_variant' => 'required|numeric',
     ]);
 
@@ -78,9 +77,9 @@ public function store(Request $request)
             'theme_id' => $taskData['tema_id'],
             'subject_id' => $validated['main_subject_id'],
         ]);
-
-        foreach ($taskData['variants'] as $index => $variant) {
-            $isCorrect = ($index == $taskData['correct_variant']);
+        // Iterate over the task's variants and create answer options
+        foreach ($taskData['variants'] as $index => $variant) { 
+            $isCorrect = ($index == $taskData['correct_variant']); // Determine if the variant is the correct answer
             $task->answers()->create([
                 'text' => $variant,
                 'is_correct' => $isCorrect,
@@ -90,8 +89,6 @@ public function store(Request $request)
 
     return redirect()->route('examList')->with('success', 'Eksāmens tika veiksmīgi pievienots!');
 }
-
-
 
     public function edit($id)
     {
@@ -114,16 +111,17 @@ public function store(Request $request)
         foreach ($request->tasks as $taskId => $taskData) {
             $task = Tasks::findOrFail($taskId);
             $task->update(['text' => $taskData['text']]);
-
+             
+            // Reset all answers for the task to incorrect
             Answers::where('task_id', $task->id)->update(['is_correct' => false]);
 
-            if (isset($taskData['correct_answer'])) {
+            if (isset($taskData['correct_answer'])) { // Mark the correct answer if provided
                 $correctAnswerId = $taskData['correct_answer'];
                 $answer = Answers::findOrFail($correctAnswerId);
                 $answer->update(['is_correct' => true]);
             }
 
-            if (isset($taskData['answers'])) {
+            if (isset($taskData['answers'])) { // Update existing answers if provided
                 foreach ($taskData['answers'] as $answerId => $answerData) {
                     $answer = Answers::findOrFail($answerId);
                     $answer->update(['text' => $answerData['text']]);
@@ -132,6 +130,7 @@ public function store(Request $request)
         }
     }
 
+    // Add new tasks if provided
     if ($request->has('new_tasks')) {
         foreach ($request->new_tasks as $newTask) {
             $task = $exam->tasks()->create(['text' => $newTask['text']]);
@@ -148,8 +147,6 @@ public function store(Request $request)
 
     return redirect()->route('examList')->with('success', 'Eksāmens veiksmīgi atjaunināts!');
 }
-
-
 
 public function deleteTask($taskId)
 {
@@ -196,30 +193,31 @@ public function submit(Request $request, $id)
 {
     $exam = Exam::with('tasks.theme', 'tasks.answers')->findOrFail($id);
 
-    $results = [];
-    $score = 0;
+    $results = [];// Array to store results for each task
+    $score = 0; // Initialize score to 0
 
     foreach ($request->input('tasks', []) as $taskInput) {
-        $task = $exam->tasks->find($taskInput['id']);
-        $selectedAnswerId = $taskInput['answer'] ?? null;
-        $correctAnswer = $task->answers->firstWhere('is_correct', true);
-        $isCorrect = $selectedAnswerId && $correctAnswer && $selectedAnswerId == $correctAnswer->id;
+        $task = $exam->tasks->find($taskInput['id']); // Find the specific task by ID
+        $selectedAnswerId = $taskInput['answer'] ?? null; // Get the user's selected answer ID (if any)
+        $correctAnswer = $task->answers->firstWhere('is_correct', true); // Fetch the correct answer for the task
+        $isCorrect = $selectedAnswerId && $correctAnswer && $selectedAnswerId == $correctAnswer->id; // Check if the selected answer is correct
 
         $results[] = [
             'task' => $task->text,
             'yourAnswer' => $selectedAnswerId 
-                ? $task->answers->find($selectedAnswerId)->text 
-                : 'Nav atzīmēts',
+                ? $task->answers->find($selectedAnswerId)->text // User's selected answer text
+                : 'Nav atzīmēts', // Default text if no answer was selected
             'correctAnswer' => $correctAnswer->text ?? 'Nav pareizas atbildes',
-            'isCorrect' => $isCorrect,
-            'theme' => $task->theme->text ?? 'Nav tēmas',
+            'isCorrect' => $isCorrect, // Whether the user's answer was correct
+            'theme' => $task->theme->text ?? 'Nav tēmas', // Theme of the task
         ];
 
         if ($isCorrect) {
-            $score++;
+            $score++; // Increment the score for each correct answer
         }
     }
 
+    // Identify topics/themes that need review (incorrect answers)
     $topicsToReview = collect($results)
         ->where('isCorrect', false)
         ->pluck('theme')
@@ -231,8 +229,10 @@ public function submit(Request $request, $id)
         'completed_at' => Carbon::now(),
     ]);
 
+    // Add review entries for topics that need improvement
     foreach ($topicsToReview as $topic) {
         Review::create([
+            'user_id' => auth()->id(),
             'exam_id' => $exam->id,
             'topic' => $topic,
         ]);
@@ -240,7 +240,5 @@ public function submit(Request $request, $id)
 
     return view('user.results', compact('results', 'score', 'topicsToReview', 'exam'));
 }
-
-
 
 }

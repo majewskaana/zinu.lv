@@ -8,15 +8,17 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Initialize task count and answer counter
     let taskCount = {{ $exam->tasks->count() }}; 
     let newAnswerCounter = 0;
 
     $(document).on('change', 'input[type="radio"].form-check-input', function() {
         const taskId = $(this).closest('.card').data('task');
-        toggleCorrectAnswer(this, taskId);
+        toggleCorrectAnswer(this, taskId);// Call function to ensure only one correct answer is selected
     });
 
     function toggleCorrectAnswer(checkbox, taskId) {
+        // Uncheck all radio buttons within the current task's answer section
         $(`#answers-${taskId}`).find('input[type="radio"]').each(function() {
             $(this).prop('checked', false); 
         });
@@ -47,6 +49,7 @@ $(document).ready(function() {
         const taskElement = $(`div[data-task="${taskId}"]`);
 
         if (confirm('Vai tiešām vēlaties dzēst šo uzdevumu?')) {
+            // Make an AJAX request to delete the task on the server
             $.ajax({
                 url: '/admin/exam/delete-task/' + taskId,
                 type: 'DELETE',

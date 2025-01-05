@@ -5,6 +5,7 @@ use App\Models\Subjects;
 use App\Models\PrivateTeacher;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class privatskolotajiController extends Controller
 {
@@ -12,23 +13,27 @@ class privatskolotajiController extends Controller
     {
         $query = PrivateTeacher::query();
         $subjects = Subjects::all();
-    
+
+        // Filter by city if provided in the request
         if ($request->has('city') && $request->city) {
             $query->where('city', 'like', '%' . $request->city . '%');
         }
-    
+        
+        // Filter by subject if provided in the request
         if ($request->has('subject') && $request->subject) {
             $query->whereHas('macibuPrieksmeti', function ($q) use ($request) {
                 $q->where('subjects.id', $request->subject);
             });
         }
-    
+
+        // Filter by form if provided in the request
         if ($request->has('form') && $request->form) {
             $query->whereHas('macibuPrieksmeti', function ($q) use ($request) {
                 $q->where('subjects.form', $request->form);
             });
         }
-
+        
+        // Execute the query to get the list of teachers
         $teachers = $query->get(); 
         if (Auth::id()) {
             $usertype = Auth()->user()->usertype;
@@ -79,6 +84,8 @@ class privatskolotajiController extends Controller
         'subject_id.*' => 'integer|exists:subjects,id', 
     ]);
 
+    $imagePath = $request->file('image')->store('teachers', 'public');
+
     $teacher = PrivateTeacher::create([
         'name' => $request->name,
         'surname' => $request->surname,
@@ -128,7 +135,7 @@ class privatskolotajiController extends Controller
 
     if ($request->hasFile('image')) {
         if ($teacher->image_path) {
-            unlink(public_path($teacher->image_path)); 
+            Storage::delete('public/' . $teacher->image_path); 
         }
         $imagePath = $request->file('image')->store('images', 'public'); 
     } else {
@@ -140,7 +147,7 @@ class privatskolotajiController extends Controller
         'surname' => $request->surname,
         'contact_info' => $request->contact_info,
         'city' => $request->city,
-        'image_path' => $imagePath,
+        'image_path' => $request->image,
         'material_style' => $request->material_style,
         'about_private_teacher' => $request->about_private_teacher,
     ]);

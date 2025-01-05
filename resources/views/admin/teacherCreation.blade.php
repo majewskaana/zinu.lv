@@ -19,11 +19,11 @@ document.addEventListener('DOMContentLoaded', function () {
     function updateSubjectIds() {
 
     const existingInputs = document.querySelectorAll('.subject-id-input');
-    existingInputs.forEach(input => input.remove());
+    existingInputs.forEach(input => input.remove()); // Remove any existing hidden inputs
 
     selectedSubjects.forEach(subjectId => {
         const input = document.createElement('input');
-        input.type = 'hidden';
+        input.type = 'hidden'; // Hidden input to store the subject ID
         input.name = 'subject_id[]';
         input.value = subjectId;
         input.classList.add('subject-id-input');
@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
     function showSubjectList() {
-        subjectList.style.display = 'block';
+        subjectList.style.display = 'block'; // Make the subject list visible
     }
 
     subjectList.addEventListener('click', function (e) {
@@ -41,8 +41,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const subjectId = e.target.getAttribute('data-id');
             const subjectName = e.target.getAttribute('data-name');
 
-            if (!selectedSubjects.includes(subjectId)) {
-                selectedSubjects.push(subjectId);
+            if (!selectedSubjects.includes(subjectId)) {// Check if the subject has already been selected
+                selectedSubjects.push(subjectId);// Add the subject ID to the selectedSubjects array
                 const selectedSubjectDiv = document.createElement('div');
                 selectedSubjectDiv.classList.add('selected-subject');
                 selectedSubjectDiv.setAttribute('data-id', subjectId);
@@ -57,8 +57,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
     selectedSubjectsContainer.addEventListener('click', function (e) {
         if (e.target && e.target.classList.contains('remove-subject-btn')) {
+            // Find the div of the selected subject to remove
             const selectedSubjectDiv = e.target.closest('.selected-subject');
             const subjectId = selectedSubjectDiv.getAttribute('data-id');
+            // Remove the subject ID from the selectedSubjects array
             selectedSubjects = selectedSubjects.filter(id => id !== subjectId);
             selectedSubjectsContainer.removeChild(selectedSubjectDiv);
             updateSubjectIds(); 

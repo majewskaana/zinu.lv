@@ -7,6 +7,7 @@
 @section('script')
 <script>
 window.onload = function () {
+    // Fetch the list of selected subject IDs from the backend and store them as an array
     let selectedSubjects = @json($teacher->macibuPrieksmeti->pluck('id')->toArray());
     const selectedSubjectsContainer = document.getElementById('selected-subjects');
     const subjectList = document.getElementById('subject-list');
@@ -14,6 +15,7 @@ window.onload = function () {
     const form = document.getElementById('teacher-form');
 
     function addSubjectToContainer(subjectId, subjectName) {
+        // Check if the subject is already added
         if (document.querySelector(`.selected-subject[data-id='${subjectId}']`)) return;
 
         const selectedSubjectDiv = document.createElement('div');
@@ -35,6 +37,7 @@ window.onload = function () {
 
     function initializeSubjects() {
         selectedSubjects.forEach(subjectId => {
+            // Find the corresponding subject option by its ID
             const subjectOption = document.querySelector(`.subject-option[data-id='${subjectId}']`);
             if (subjectOption) {
                 const subjectName = subjectOption.getAttribute('data-name');
@@ -47,6 +50,7 @@ window.onload = function () {
         subjectList.style.display = 'block';  
     });
 
+    // Event listener to add a subject when a subject option is clicked from the list
     subjectList.addEventListener('click', function (e) {
         if (e.target.classList.contains('subject-option')) {
             const subjectId = e.target.getAttribute('data-id');
@@ -149,7 +153,7 @@ window.onload = function () {
             @if ($teacher->image_path)
                 <div class="mt-2">
                     <p>Esošais attēls:</p>
-                    <img src="{{ asset($teacher->image_path) }}" alt="Teacher Image" class="img-fluid" style="max-width: 200px; border: 1px solid #ddd;">
+                    <img src="{{ asset('storage/' .$teacher->image_path) }}" alt="Teacher Image" class="img-fluid" style="max-width: 200px; border: 1px solid #ddd;">
                 </div>
             @endif
         </div>
