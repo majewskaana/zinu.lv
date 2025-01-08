@@ -22,15 +22,15 @@ class DatabaseSeeder extends Seeder
             'name' => 'New',
             'surname' => 'Admin',
             'email' => 'newadmin@new.admin',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('@boupria'),
             'usertype' => 'admin',
         ]);
 
         User::create([
             'name' => 'New',
             'surname' => 'User',
-            'email' => 'newuser@new.user',
-            'password' => Hash::make('password'),
+            'email' => 'example@domain.com',
+            'password' => Hash::make('@boupria'),
             'usertype' => 'user',
         ]);
 
