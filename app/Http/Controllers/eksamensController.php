@@ -130,21 +130,6 @@ public function store(Request $request)
         }
     }
 
-    // Add new tasks if provided
-    if ($request->has('new_tasks')) {
-        foreach ($request->new_tasks as $newTask) {
-            $task = $exam->tasks()->create(['text' => $newTask['text']]);
-
-            foreach ($newTask['answers'] as $newAnswer) {
-                $isCorrect = isset($newAnswer['is_correct']) && $newAnswer['is_correct'] === 'on';
-                $task->answers()->create([
-                    'text' => $newAnswer['text'],
-                    'is_correct' => $isCorrect,
-                ]);
-            }
-        }
-    }
-
     return redirect()->route('examList')->with('success', 'Eksāmens veiksmīgi atjaunināts!');
 }
 

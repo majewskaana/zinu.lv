@@ -179,8 +179,6 @@ $(document).ready(function() {
             @endforeach
         </div>
 
-        <button type="button" class="btn btn-primary mb-3" id="add_task">Pievienot uzdevumu</button>
-
         <div class="mt-3">
             <button type="submit" class="btn btn-success">Saglabāt Izmaiņas</button>
             <a href="{{ route('examList') }}" class="btn btn-secondary">Atcelt</a>
