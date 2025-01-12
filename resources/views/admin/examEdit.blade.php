@@ -135,13 +135,7 @@ $(document).ready(function() {
 
         <div class="form-group">
             <label for="macibu_prieksmets_id">Priekšmets:</label>
-            <select name="macibu_prieksmets_id" id="macibu_prieksmets_id" class="form-control" required>
-                @foreach ($subjects as $subject)
-                    <option value="{{ $subject->id }}" {{ $subject->id == $exam->macibu_prieksmets_id ? 'selected' : '' }}>
-                        {{ $subject->name }}
-                    </option>
-                @endforeach
-            </select>
+            <p class="form-control-plaintext"></p>{{ $exam->macibuPrieksmets->name }}</p>
         </div>
 
         <hr>

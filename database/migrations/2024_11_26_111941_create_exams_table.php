@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->year('gads');
             $table->string('limenis');
-            $table->foreignId('macibu_prieksmets_id')->constrained('subjects')->nullable();
+            $table->foreignId('macibu_prieksmets_id')->constrained('subjects')->nullable()->onDelete('cascade');
             $table->timestamps();
         });
     }
